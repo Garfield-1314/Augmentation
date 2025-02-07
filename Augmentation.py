@@ -29,8 +29,8 @@ def Horizontal(image):
 def Vertical(image):
     return cv2.flip(image,0,dst=None) #垂直镜像
 
-def Horizontal_Vertical(rootpath):
-    save_loc = rootpath
+def Horizontal_Vertical(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -39,6 +39,11 @@ def Horizontal_Vertical(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
 
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
 
@@ -64,8 +69,8 @@ def Rotate(image, angle, scale):
     image = cv2.warpAffine(image,M,(w,h),borderValue=(255,0,0))
     return image
 
-def Rotate_45(rootpath):
-    save_loc = rootpath
+def Rotate_45(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -74,6 +79,11 @@ def Rotate_45(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
 
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
             
@@ -81,8 +91,8 @@ def Rotate_45(rootpath):
             cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_x.jpg"), img_rotate)
 
 
-def Rotate_90_180_270(rootpath):
-    save_loc = rootpath
+def Rotate_90_180_270(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -91,6 +101,12 @@ def Rotate_90_180_270(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
             
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
+
             img_i = cv2.imread(file_i_path)
             
             img_rotate = Rotate(img_i, 90,1)
@@ -119,8 +135,8 @@ def Move(img,x,y):
     dst=cv2.warpAffine(img,mat_translation,(width,height))  #变换函数
     return dst
 
-def move_img(rootpath):
-    save_loc = rootpath
+def move_img(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -128,6 +144,12 @@ def move_img(rootpath):
             split = os.path.split(file_i_path)
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)   
+
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
             
@@ -165,8 +187,8 @@ def GaussianNoise(image,percetage=0.01):
         G_Noiseimg[temp_x][temp_y][np.random.randint(3)] = np.random.randn(1)[0]
     return G_Noiseimg
 
-def G_and_S(rootpath):
-    save_loc = rootpath
+def G_and_S(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -175,6 +197,11 @@ def G_and_S(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
 
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
 
@@ -209,8 +236,8 @@ def compress_img_CV(img, compress_rate=0.5, show=False):
                                 interpolation=cv2.INTER_AREA)
         return img_resize
 
-def YASUO_80(rootpath):
-    save_loc = rootpath
+def YASUO_80(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -219,6 +246,11 @@ def YASUO_80(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
 
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
 
@@ -236,8 +268,8 @@ def Darker_Brighter(image,percetage):
     brightened_image = cv2.multiply(image, brightness_factor)
     return brightened_image
 
-def D_dan_B(rootpath):
-    save_loc = rootpath
+def D_dan_B(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -245,6 +277,12 @@ def D_dan_B(rootpath):
             split = os.path.split(file_i_path)
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
+
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
             i=0.1
@@ -270,8 +308,8 @@ def Contrast(image,percetage):
     contrasted_image = cv2.convertScaleAbs(image, alpha=contrast_factor, beta=0)
     return contrasted_image
 
-def Contrast_image(rootpath):
-    save_loc = rootpath
+def Contrast_image(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -279,6 +317,12 @@ def Contrast_image(rootpath):
             split = os.path.split(file_i_path)
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
+
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
             
@@ -304,8 +348,8 @@ def hsv(image,percetage):
     saturated_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
     return saturated_image
 
-def hsv_image(rootpath):
-    save_loc = rootpath
+def hsv_image(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -313,6 +357,12 @@ def hsv_image(rootpath):
             split = os.path.split(file_i_path)
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
+
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
             
@@ -338,8 +388,8 @@ def hue(image,percetage):
     hue_shifted_image = cv2.cvtColor(hue_image, cv2.COLOR_HSV2BGR)
     return hue_shifted_image
 
-def hue_image(rootpath):
-    save_loc = rootpath
+def hue_image(rootpath,savepath):
+    save_loc = savepath
     for a,b,c in os.walk(rootpath):
         for file_i in c:
             file_i_path = os.path.join(a,file_i)
@@ -348,6 +398,12 @@ def hue_image(rootpath):
             dir_loc = os.path.split(split[0])[1]
             save_path = os.path.join(save_loc,dir_loc)
 
+            if not os.path.exists(save_path):  # 先检查是否存在
+                os.makedirs(save_path)  # 创建多级目录
+                print(f"目录 {save_path} 创建成功！")
+            # else:
+            #     print(f"目录 {save_path} 已存在，无需创建。")
+
             img_i = cv2.imread(file_i_path)
         
                 # img_hued = Contrast(img_i,0-i)
@@ -355,6 +411,7 @@ def hue_image(rootpath):
 
             img_hueh = hue(img_i,7)
             cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + "_hueh.jpg"), img_hueh)                        
+
 
 # def TestOnePic():
 #     test_jpg_loc = r"data/A/firearms_001.jpg"
@@ -370,15 +427,28 @@ def hue_image(rootpath):
 
 if __name__ == "__main__":
 
-    root_path = r"2"
-    # YASUO_80(root_path)   #图像压缩---任意比例
-    # Rotate_90_180_270(root_path)    #图像旋转---可任意角度
+    root_path = r"dataset/origin"
 
-    # hue_image(root_path)    #图像色调扰动---可任意参数
-    # D_dan_B(root_path)    #图像明暗扰动---可任意参数
-    Contrast_image(root_path)    #图像对比度扰动---可任意参数
-    # hsv_image(root_path)         #图像饱和度扰动---可任意参数
-    # G_and_S(root_path)           #图像高斯和椒盐噪声扰动---可任意参数
+    save_path = r"dataset/YASUO_80"
+    YASUO_80(root_path,save_path)   #图像压缩---任意比例
+
+    # save_path = r"dataset/Rotate"
+    # Rotate_90_180_270(root_path,save_path)    #图像旋转---可任意角度
+
+    # save_path = r"dataset/hue"
+    # hue_image(root_path,save_path)    #图像色调扰动---可任意参数
+
+    # save_path = r"dataset/D_B"
+    # D_dan_B(root_path,save_path)    #图像明暗扰动---可任意参数
+
+    # save_path = r"dataset/Cont"
+    # Contrast_image(root_path,save_path)    #图像对比度扰动---可任意参数
+
+    # save_path = r"dataset/hsv"
+    # hsv_image(root_path,save_path)         #图像饱和度扰动---可任意参数
+
+    # save_path = r"dataset/GS"
+    # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
     
  
 
