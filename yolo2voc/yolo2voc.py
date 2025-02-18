@@ -9,7 +9,10 @@ def makexml(picPath, txtPath, xmlPath):  # txt所在文件夹路径，xml文件�
     在自己的标注图片文件夹下建三个子文件夹，分别命名为picture、txt、xml
     """
     dic = {'0': "object",  # 创建字典用来对类型进行转换
-        #    '1': "person",  # 此处的字典要与自己的classes.txt文件中的类对应，且顺序要一致
+           '2': "2",  # 此处的字典要与自己的classes.txt文件中的类对应，且顺序要一致
+           '17': "17", 
+           '24': "24", 
+           '25': "25", 
            }
     files = os.listdir(txtPath)
     for i, name in enumerate(files):
