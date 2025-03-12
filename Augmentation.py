@@ -254,7 +254,7 @@ def YASUO_80(rootpath,savepath):
 
             img_i = cv2.imread(file_i_path)
 
-            img_yasuo = compress_img_CV(img_i,compress_rate=0.5)
+            img_yasuo = compress_img_CV(img_i,compress_rate=0.06)
             cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_80.jpg"),img_yasuo)
 ####################压缩图片###########################################
 ####################压缩图片###########################################
@@ -285,17 +285,13 @@ def D_dan_B(rootpath,savepath):
             #     print(f"目录 {save_path} 已存在，无需创建。")
 
             img_i = cv2.imread(file_i_path)
-            i=0.1
-            # while(i<=0.2):
-            #     img_dar = Darker_Brighter(img_i,1-i)
-            #     cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_dar.jpg"), img_dar)
-            #     i+=0.1
 
-            i=0.1
-            while(i<=0.7):             
-                img_bar = Darker_Brighter(img_i,1+i)
-                cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_bar.jpg"), img_bar)                        
-                i+=0.1
+            img_dar = Darker_Brighter(img_i,1.5)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(1.25) + "_bar.jpg"), img_dar)
+
+          
+            img_bar = Darker_Brighter(img_i,0.75)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(0.75) + "_dar.jpg"), img_bar)                        
 ####################亮暗###########################################
 ####################亮暗###########################################
 ####################亮暗###########################################
@@ -326,14 +322,12 @@ def Contrast_image(rootpath,savepath):
 
             img_i = cv2.imread(file_i_path)
             
-            i=0.1
-            while(i<=0.3):
-                img__Contrastd = Contrast(img_i,1-i)
-                cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_Contrastd.jpg"), img__Contrastd)
+            i=0.3
+            img__Contrastd = Contrast(img_i,1-i)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_Contrastd.jpg"), img__Contrastd)
 
-                img__Contrasth = Contrast(img_i,1+i)
-                cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_Contrasth.jpg"), img__Contrasth)                        
-                i+=0.1
+            img__Contrasth = Contrast(img_i,1+i)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_Contrasth.jpg"), img__Contrasth)                        
 ####################对比度###########################################
 ####################对比度###########################################
 ####################对比度###########################################
@@ -366,14 +360,12 @@ def hsv_image(rootpath,savepath):
 
             img_i = cv2.imread(file_i_path)
             
-            i=0.1
-            while(i<=0.3):
-                img_hsvd = hsv(img_i,1-i)
-                cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_hsvd.jpg"), img_hsvd)
+            i=0.25
+            img_hsvd = hsv(img_i,1-i)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_hsvd.jpg"), img_hsvd)
 
-                img_hsvh = hsv(img_i,1+i)
-                cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_hsvh.jpg"), img_hsvh)                        
-                i+=0.1
+            img_hsvh = hsv(img_i,1+i)
+            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + str(i) + "_hsvh.jpg"), img_hsvh)                        
 ####################饱和度###########################################
 ####################饱和度###########################################
 ####################饱和度###########################################
@@ -425,12 +417,17 @@ def hue_image(rootpath,savepath):
 #     cv2.imshow("Img 2", img2)
 #     cv2.waitKey(0)
 
-if __name__ == "__main__":
+def runs():
 
-    root_path = r"dataset/origin"
+    root_path = r"dataset\N_ROTE"
 
-    save_path = r"dataset/YASUO_80"
-    YASUO_80(root_path,save_path)   #图像压缩---任意比例
+    save_path = r"dataset\N_DB"
+
+    # YASUO_80(root_path,save_path)
+    # Rotate_90_180_270(root_path,save_path)
+    D_dan_B(root_path,save_path)
+
+    # YASUO_80(root_path,save_path)   #图像压缩---任意比例
 
     # save_path = r"dataset/Rotate"
     # Rotate_90_180_270(root_path,save_path)    #图像旋转---可任意角度
@@ -449,6 +446,8 @@ if __name__ == "__main__":
 
     # save_path = r"dataset/GS"
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
-    
+
+if __name__ == "__main__":
+    runs()
  
 
