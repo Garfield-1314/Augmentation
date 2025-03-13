@@ -13,12 +13,11 @@ def find_images(root_dir):
 
 def batch_overlay(backgrounds_dir=r'dataset\background', 
                  pics_root=r'dataset\YASUO_80',
-                 output_root=r'dataset\merged_output'):
+                 output_root=r'merged_output',
+                 min_scale=0.3,  # 新增缩放参数
+                 max_scale=1.7):
     """
-    保留子目录结构的批量处理
-    :param backgrounds_dir: 背景图目录
-    :param pics_root: 小图根目录（包含子目录）
-    :param output_root: 输出根目录
+    支持缩放、旋转和位置调整的批量处理
     """
     
     # 获取所有背景和小图路径
@@ -33,42 +32,63 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
             bg_name = os.path.splitext(os.path.basename(bg_path))[0]
             
             for pic_path in pic_paths:
-                # 计算相对路径
+                # 计算输出路径
                 rel_path = os.path.relpath(pic_path, pics_root)
                 output_dir = os.path.join(output_root, os.path.dirname(rel_path))
-                
-                # 创建对应子目录
                 os.makedirs(output_dir, exist_ok=True)
                 
-                # 生成唯一文件名
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S%f")
                 pic_name = os.path.splitext(os.path.basename(pic_path))[0]
                 output_name = f"{bg_name}_{pic_name}_{timestamp}.jpg"
                 output_path = os.path.join(output_dir, output_name)
                 
-                # 处理单个合成
                 try:
+                    # 加载并处理小图
                     small_img = Image.open(pic_path).convert('RGBA')
                     
-                    # 随机旋转和定位
-                    angle = random.uniform(0, 360)
-                    rotated = small_img.rotate(angle, expand=True, fillcolor=(0,0,0,0))
-                    rw, rh = rotated.size
+                    # 随机缩放（保持宽高比）
+                    scale = random.uniform(min_scale, max_scale)
+                    new_size = (
+                        int(small_img.width * scale),
+                        int(small_img.height * scale)
+                    )
+                    scaled_img = small_img.resize(new_size, Image.LANCZOS)
                     
-                    # 确保75%可见的定位逻辑
+                    # 随机旋转
+                    angle = random.uniform(0, 360)
+                    rotated_img = scaled_img.rotate(
+                        angle,
+                        expand=True,
+                        resample=Image.BICUBIC,
+                        fillcolor=(0, 0, 0, 0)
+                    )
+                    rw, rh = rotated_img.size
+                    
+                    # 智能定位（至少75%可见）
                     valid_pos = False
                     for _ in range(100):
-                        x = random.randint(-int(rw*0.3), bg_w - int(rw*0.7))
-                        y = random.randint(-int(rh*0.3), bg_h - int(rh*0.7))
-                        visible_area = (min(x+rw, bg_w) - max(x,0)) * (min(y+rh, bg_h) - max(y,0))
-                        if visible_area >= 0.75 * rw * rh:
-                            valid_pos = True
-                            break
+                        # 动态计算位置范围
+                        x_min = max(-int(rw * 0.3), -rw + int(bg_w * 0.25))
+                        x_max = min(bg_w - int(rw * 0.7), bg_w - int(rw * 0.25))
+                        y_min = max(-int(rh * 0.3), -rh + int(bg_h * 0.25))
+                        y_max = min(bg_h - int(rh * 0.7), bg_h - int(rh * 0.25))
+                        
+                        x = random.randint(x_min, x_max)
+                        y = random.randint(y_min, y_max)
+                        
+                        # 计算可见区域
+                        visible_w = min(x+rw, bg_w) - max(x, 0)
+                        visible_h = min(y+rh, bg_h) - max(y, 0)
+                        if visible_w > 0 and visible_h > 0:
+                            visible_area = visible_w * visible_h
+                            if visible_area >= 0.75 * rw * rh:
+                                valid_pos = True
+                                break
                     
                     # 合成图像
                     composite = Image.new('RGBA', (bg_w, bg_h))
                     composite.paste(base_img, (0,0))
-                    composite.alpha_composite(rotated, (x,y))
+                    composite.alpha_composite(rotated_img, (x, y))
                     composite.convert('RGB').save(output_path)
                     
                     print(f"生成成功：{output_path}")
@@ -80,4 +100,7 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
             print(f"背景图处理失败：{bg_path} | 错误：{str(e)}")
 
 if __name__ == '__main__':
-    batch_overlay()
+    batch_overlay(
+        min_scale=0.8,  # 可调节参数
+        max_scale=1.2   # 缩放范围 50%-150%
+    )
