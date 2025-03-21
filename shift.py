@@ -1,118 +1,88 @@
 import os
 import shutil
 import random
-from tqdm import tqdm
-from glob import glob
 
-def split_dataset(
-    source_dir,
-    train_dir,
-    test_dir,
-    train_ratio=0.8,
-    test_ratio=0.2,
-    seed=None
-):
+def split_dataset(source_dir, target_dir, train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=None):
     """
-    修复文件重复问题的版本
-    """
-    assert abs((train_ratio + test_ratio) - 1.0) < 1e-9, "比例总和必须等于1"
+    将源目录中的图片按比例分配到训练集、验证集和测试集
     
+    参数：
+        source_dir: 包含分类子文件夹的源目录路径
+        target_dir: 输出目录路径（会自动创建train/val/test子目录）
+        train_ratio: 训练集比例（默认0.7）
+        val_ratio: 验证集比例（默认0.2）
+        test_ratio: 测试集比例（默认0.1）
+        seed: 随机种子（默认None）
+    """
+    # 验证比例总和为1
+    assert abs((train_ratio + val_ratio + test_ratio) - 1.0) < 1e-9, "比例总和必须等于1"
+    
+    # 设置随机种子
     if seed is not None:
         random.seed(seed)
     
-    # 改进的文件收集方式（去重）
-    def get_unique_files(path, exts):
-        seen = set()
-        files = []
-        for ext in exts:
-            for pattern in [f'*.{ext}', f'*.{ext.upper()}']:
-                for f in glob(os.path.join(path, '**', pattern), recursive=True):
-                    # 标准化路径用于去重（特别处理Windows大小写问题）
-                    norm_path = os.path.normcase(f)
-                    if norm_path not in seen:
-                        seen.add(norm_path)
-                        files.append(f)
-        return files
-
-    # 遍历每个类别目录
-    classes = [d for d in os.listdir(source_dir) 
-              if os.path.isdir(os.path.join(source_dir, d))]
+    # 创建目标目录
+    for split in ['train', 'val', 'test']:
+        os.makedirs(os.path.join(target_dir, split), exist_ok=True)
     
-    for class_name in tqdm(classes, desc="Processing classes"):
+    # 遍历每个类别目录
+    for class_name in os.listdir(source_dir):
         class_path = os.path.join(source_dir, class_name)
         
-        # 获取去重后的文件列表
-        images = get_unique_files(class_path, ['png', 'jpg', 'jpeg', 'gif', 'bmp'])
+        if not os.path.isdir(class_path):
+            continue
         
-        if not images:
+        # 获取所有图片文件
+        images = [f for f in os.listdir(class_path) 
+                 if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
+        
+        # 打乱文件顺序
+        random.shuffle(images)
+        total = len(images)
+        
+        if total == 0:
             print(f"警告: {class_path} 中没有图片文件，跳过处理")
             continue
         
-        # 转换为相对路径
-        rel_images = [os.path.relpath(p, class_path) for p in images]
+        # 计算分割点
+        train_split = int(train_ratio * total)
+        val_split = train_split + int(val_ratio * total)
         
-        random.shuffle(rel_images)
-        total = len(rel_images)
+        # 分割文件列表
+        train_files = images[:train_split]
+        val_files = images[train_split:val_split]
+        test_files = images[val_split:]
         
-        train_split = round(train_ratio * total)
-        test_split = total - train_split
-        
-        train_files = rel_images[:train_split]
-        test_files = rel_images[train_split:]
-        
-        # 复制文件函数封装
-        def copy_files(files, dest_root):
-            for rel_path in tqdm(files, desc=f"Copying to {os.path.basename(dest_root)}"):
-                src = os.path.join(class_path, rel_path)
-                dst = os.path.join(dest_root, class_name, rel_path)
+        # 复制文件到目标目录
+        for split, files in [('train', train_files), 
+                           ('val', val_files), 
+                           ('test', test_files)]:
+            if len(files) == 0:
+                continue
+            
+            dest_dir = os.path.join(target_dir, split, class_name)
+            os.makedirs(dest_dir, exist_ok=True)
+            
+            for f in files:
+                src = os.path.join(class_path, f)
+                dst = os.path.join(dest_dir, f)
+                shutil.copy2(src, dst)
                 
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                
-                # 仅在文件不存在时复制（避免重复）
-                if not os.path.exists(dst):
-                    shutil.copy2(src, dst)
-                else:
-                    print(f"警告: 跳过重复文件 {dst}")
-        
-        # 执行复制
-        copy_files(train_files, train_dir)
-        copy_files(test_files, test_dir)
-        
-        print(f"\n类别 {class_name} 划分完成: "
-             f"{len(train_files)} 训练, {len(test_files)} 测试")
+        print(f"类别 {class_name} 完成划分: "
+             f"{len(train_files)} 训练, "
+             f"{len(val_files)} 验证, "
+             f"{len(test_files)} 测试")
 
-
-import Augmentation as Au
 
 def runs():
     split_dataset(
-        source_dir="dataset/Origin",
-        train_dir="dataset/stage1",
-        test_dir="dataset/test",
+        source_dir="dataset/COVER",
+        target_dir="dataset",
         train_ratio=0.9,
+        val_ratio=0.0,
         test_ratio=0.1,
-        seed=66
+        seed=34  # 固定随机种子确保可重复性
     )
-
-    root_path = r"dataset\stage1"
-    save_path = r"dataset\stage2"
-    Au.YASUO_80(root_path,save_path)
-
-    root_path = r"dataset\stage2"
-    save_path = r"dataset\stage2"
-    Au.Rotate_90_180_270(root_path,save_path)
-
-
-    root_path = r"dataset\stage2"
-    save_path = r"dataset\stage3"
-    Au.D_dan_B(root_path,save_path)
-
-    root_path = r"dataset\test"
-    save_path = r"dataset\test"
-    Au.YASUO_80(root_path,save_path)
-    Au.Rotate_90_180_270(root_path,save_path)
-    Au.D_dan_B(root_path,save_path)
-
 
 if __name__ == "__main__":
     runs()
