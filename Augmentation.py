@@ -229,33 +229,58 @@ def Blur(img):
 ####################压缩图片###########################################
 ####################压缩图片###########################################
 ####################压缩图片###########################################
-def compress_img_CV(img, compress_rate=0.5, show=False):
-        heigh, width = img.shape[:2]
-        # 双三次插值
-        img_resize = cv2.resize(img, (int(heigh*compress_rate), int(width*compress_rate)),
-                                interpolation=cv2.INTER_AREA)
-        return img_resize
+def compress_img_CV(img, target_width=800, target_height=600):
+    """
+    将图像缩放到固定大小
+    :param img: 输入图像
+    :param target_width: 目标宽度
+    :param target_height: 目标高度
+    :return: 缩放后的图像
+    """
+    img_resize = cv2.resize(img, (target_width, target_height), interpolation=cv2.INTER_AREA)
+    return img_resize
 
-def YASUO_80(rootpath,savepath):
+def YASUO_80(rootpath, savepath, target_width=800, target_height=600):
+    """
+    遍历指定目录下的所有图片文件，将其缩放到固定大小并保存到目标目录
+    :param rootpath: 源图片目录
+    :param savepath: 保存目录
+    :param target_width: 目标宽度
+    :param target_height: 目标高度
+    """
     save_loc = savepath
-    for a,b,c in os.walk(rootpath):
+    for a, b, c in os.walk(rootpath):
         for file_i in c:
-            file_i_path = os.path.join(a,file_i)
-            print(file_i_path)
+            file_i_path = os.path.join(a, file_i)
+            print(f"处理文件: {file_i_path}")
+            
+            # 获取文件所在目录名
             split = os.path.split(file_i_path)
             dir_loc = os.path.split(split[0])[1]
-            save_path = os.path.join(save_loc,dir_loc)
+            save_path = os.path.join(save_loc, dir_loc)
 
-            if not os.path.exists(save_path):  # 先检查是否存在
-                os.makedirs(save_path)  # 创建多级目录
+            # 如果保存路径不存在，则创建
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
                 print(f"目录 {save_path} 创建成功！")
             # else:
             #     print(f"目录 {save_path} 已存在，无需创建。")
 
+            # 读取图像
             img_i = cv2.imread(file_i_path)
+            if img_i is None:
+                print(f"无法读取文件: {file_i_path}")
+                continue
 
-            img_yasuo = compress_img_CV(img_i,compress_rate=0.06)
-            cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_80.jpg"),img_yasuo)
+            # 缩放图像
+            img_yasuo = compress_img_CV(img_i, target_width=target_width, target_height=target_height)
+
+            # 保存缩放后的图像
+            base_name = os.path.splitext(file_i)[0]  # 获取文件名（不含扩展名）
+            save_file_name = f"{base_name}_80.jpg"
+            save_file_path = os.path.join(save_path, save_file_name)
+            cv2.imwrite(save_file_path, img_yasuo)
+            print(f"图像已保存到: {save_file_path}")
 ####################压缩图片###########################################
 ####################压缩图片###########################################
 ####################压缩图片###########################################
@@ -405,6 +430,73 @@ def hue_image(rootpath,savepath):
             cv2.imwrite(os.path.join(save_path, file_i[:-4] + "_" + "_hueh.jpg"), img_hueh)                        
 
 
+
+
+def pixelate(image, pixel_size):
+    """
+    将图像像素化。
+
+    :param image: 输入的BGR图像 (OpenCV格式)
+    :param pixel_size: 像素块的大小
+    :return: 像素化后的图像 (OpenCV格式)
+    """
+    # 获取图像尺寸
+    height, width, _ = image.shape
+
+    # 调整图像尺寸，使其可以被pixel_size整除
+    new_width = width // pixel_size * pixel_size
+    new_height = height // pixel_size * pixel_size
+    resized_image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_NEAREST)
+
+    # 分块并计算平均颜色
+    pixelated_image = resized_image.copy()
+    for i in range(0, new_width, pixel_size):
+        for j in range(0, new_height, pixel_size):
+            # 获取当前像素块
+            block = resized_image[j:j+pixel_size, i:i+pixel_size]
+            average_color = block.mean(axis=0).mean(axis=0)  # 计算平均颜色
+
+            # 填充像素块
+            pixelated_image[j:j+pixel_size, i:i+pixel_size] = average_color
+
+    # 将图像调整回原始尺寸
+    pixelated_image = cv2.resize(pixelated_image, (width, height), interpolation=cv2.INTER_NEAREST)
+    return pixelated_image
+
+def pixelate_image(rootpath, savepath, pixel_size=10):
+    """
+    遍历根目录下的所有图片，进行像素化处理并保存到目标目录。
+
+    :param rootpath: 要处理的图片根目录
+    :param savepath: 处理后图片的保存目录
+    :param pixel_size: 像素块的大小
+    """
+    for root, _, files in os.walk(rootpath):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                # 读取图像
+                img = cv2.imread(file_path)
+                if img is None:
+                    print(f"无法读取图像: {file_path}")
+                    continue
+
+                # 像素化处理
+                pixelated_img = pixelate(img, pixel_size)
+
+                # 构造保存路径
+                relative_path = os.path.relpath(root, rootpath)
+                save_dir = os.path.join(savepath, relative_path)
+                os.makedirs(save_dir, exist_ok=True)
+
+                # 保存图像
+                save_file = os.path.join(save_dir, f"pixelated_{file}")
+                cv2.imwrite(save_file, pixelated_img)
+                print(f"保存图像: {save_file}")
+
+            except Exception as e:
+                print(f"处理图像时出错: {file_path}, 错误信息: {e}") 
+
 # def TestOnePic():
 #     test_jpg_loc = r"data/A/firearms_001.jpg"
 #     test_jpg = cv2.imread(test_jpg_loc)
@@ -418,14 +510,13 @@ def hue_image(rootpath,savepath):
 #     cv2.waitKey(0)
 
 def runs():
+    root_path = r"dataset\example"
 
-    root_path = r"dataset\N_ROTE"
-
-    save_path = r"dataset\N_DB"
-
-    # YASUO_80(root_path,save_path)
+    save_path = r"dataset\80"
+    
+    YASUO_80(root_path,save_path,target_width=96, target_height=96)
     # Rotate_90_180_270(root_path,save_path)
-    D_dan_B(root_path,save_path)
+    # D_dan_B(root_path,save_path)
 
     # YASUO_80(root_path,save_path)   #图像压缩---任意比例
 
@@ -446,7 +537,8 @@ def runs():
 
     # save_path = r"dataset/GS"
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
-
+    
+    # pixelate_image(root_path,save_path,pixel_size=2)
 if __name__ == "__main__":
     runs()
  

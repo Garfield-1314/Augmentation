@@ -12,8 +12,8 @@ def find_images(root_dir):
                 yield os.path.join(dirpath, f)
 
 def batch_overlay(backgrounds_dir=r'dataset\background', 
-                 pics_root=r'dataset\YASUO_80',
-                 output_root=r'merged_output',
+                 pics_root=r'dataset\stage2',
+                 output_root=r'dataset\stage3',
                  min_scale=0.3,  # 新增缩放参数
                  max_scale=1.7):
     """
@@ -100,7 +100,11 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
             print(f"背景图处理失败：{bg_path} | 错误：{str(e)}")
 
 if __name__ == '__main__':
-    batch_overlay(
-        min_scale=0.8,  # 可调节参数
-        max_scale=1.2   # 缩放范围 50%-150%
-    )
+    for i in range(10):
+        batch_overlay(
+            backgrounds_dir=r'dataset\background', 
+            pics_root=r'dataset\80',
+            output_root=r'dataset\COVER',
+            min_scale=0.8,  # 可调节参数
+            max_scale=1.2   # 缩放范围 50%-150%
+        )
