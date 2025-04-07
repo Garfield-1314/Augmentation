@@ -14,10 +14,14 @@ def find_images(root_dir):
 def batch_overlay(backgrounds_dir=r'dataset\background', 
                  pics_root=r'dataset\stage2',
                  output_root=r'dataset\stage3',
-                 min_scale=0.3,  # 新增缩放参数
-                 max_scale=1.7):
+                 min_scale=0.3,
+                 max_scale=1.7,
+                 min_visible=0.75):  # 新增可见比例参数
     """
     支持缩放、旋转和位置调整的批量处理
+    
+    参数:
+    min_visible - 可见区域最小比例 (0.0~1.0)
     """
     
     # 获取所有背景和小图路径
@@ -64,7 +68,7 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
                     )
                     rw, rh = rotated_img.size
                     
-                    # 智能定位（至少75%可见）
+                    # 智能定位（根据min_visible参数控制可见比例）
                     valid_pos = False
                     for _ in range(100):
                         # 动态计算位置范围
@@ -81,7 +85,8 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
                         visible_h = min(y+rh, bg_h) - max(y, 0)
                         if visible_w > 0 and visible_h > 0:
                             visible_area = visible_w * visible_h
-                            if visible_area >= 0.75 * rw * rh:
+                            # 使用参数控制可见比例
+                            if visible_area >= min_visible * rw * rh:
                                 valid_pos = True
                                 break
                     
@@ -100,11 +105,12 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
             print(f"背景图处理失败：{bg_path} | 错误：{str(e)}")
 
 if __name__ == '__main__':
-    for i in range(10):
+    for i in range(2):
         batch_overlay(
             backgrounds_dir=r'dataset\background', 
-            pics_root=r'dataset\80',
-            output_root=r'dataset\COVER',
-            min_scale=0.8,  # 可调节参数
-            max_scale=1.2   # 缩放范围 50%-150%
+            pics_root=r'dataset\96',
+            output_root=r'dataset\val',
+            min_scale=0.8,
+            max_scale=1.2,
+            min_visible=0.9  # 可调节可见比例参数
         )
