@@ -16,12 +16,12 @@ def find_images(root_dir):
 
 # 定义数据增强管道
 augmentation_pipeline = A.Compose([
-    A.ElasticTransform(p=0.25, alpha=1.2, sigma=25),
-    A.OpticalDistortion(p=0.25, distort_limit=0.25, fill_value=(255, 255, 255)),
-    A.Rotate(limit=15, p=0.6, border_mode=cv2.INTER_NEAREST),
-    A.RGBShift(r_shift_limit=15, g_shift_limit=15, b_shift_limit=15, p=0.3),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.3, 0.3), contrast_limit=(-0.15, 0.15)),
-    A.HueSaturationValue(hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=15, p=0.4),
+    A.ElasticTransform(p=0.45, alpha=1.2, sigma=50),
+    A.OpticalDistortion(p=0.45, distort_limit=0.25),
+    A.Rotate(limit=10, p=0.6, border_mode=cv2.INTER_NEAREST),
+    A.RGBShift(r_shift_limit=25, g_shift_limit=25, b_shift_limit=25, p=0.5),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.5, 0.5), contrast_limit=(-0.25, 0.25)),
+    A.HueSaturationValue(hue_shift_limit=25, sat_shift_limit=35, val_shift_limit=25, p=0.6),
     A.MotionBlur(p=0.3, blur_limit=(3, 7))
 ], p=0.9)
 
@@ -145,7 +145,7 @@ def batch_overlay(
 
                         # 解包结果
                         rotated_img, (x, y), final_scale = result
-                        print(f"✅ 使用缩放比例 {final_scale:.2f} 成功定位")
+                        # print(f"✅ 使用缩放比例 {final_scale:.2f} 成功定位")
 
                         # 合成图像
                         composite = Image.new('RGBA', (bg_w, bg_h))
@@ -176,10 +176,10 @@ if __name__ == '__main__':
     # 示例配置（可根据需要调整）
     batch_overlay(
         backgrounds_dir='./background',
-        pics_root='./nums/dataset',
-        output_root='./dataset/test',
-        min_scale=0.8,
-        max_scale=1.2,
-        min_visible=0.9,
-        num_augments=50
+        pics_root='96',
+        output_root='image',
+        min_scale=1.2,
+        max_scale=1.4,
+        min_visible=0.8,
+        num_augments=10
     )
