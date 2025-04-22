@@ -182,6 +182,6 @@ if __name__ == '__main__':
         base_padding=2,
         underline_config={
             'width': 4,
-            'padding': 2
+            'padding': 4
         }
     )
