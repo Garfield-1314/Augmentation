@@ -38,6 +38,6 @@ def generate_noise_image(size=(96, 96), save_path=None, white_background=False):
 
 # 生成白色背景图
 generate_noise_image(
-    save_path='./dataset/background/white_image.png',
+    save_path='./background/white_image.png',
     white_background=True
 )
