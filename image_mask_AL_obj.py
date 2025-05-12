@@ -16,14 +16,14 @@ def find_images(root_dir):
 
 # 定义数据增强管道
 augmentation_pipeline = A.Compose([
-    # A.HorizontalFlip(p=0.25),
-    # A.VerticalFlip(p=0.25),
-    A.ElasticTransform(p=0.45, alpha=1.2, sigma=50),
+    A.HorizontalFlip(p=0.5),
+    A.VerticalFlip(p=0.5),
+    A.ElasticTransform(p=0.25, alpha=1.2, sigma=50),
     A.OpticalDistortion(p=0.45, distort_limit=0.25),
-    # A.Rotate(limit=(-15,15),  border_mode= cv2.BORDER_WRAP ,p=1),
+    A.Rotate(limit=(-15,15),  border_mode= cv2.BORDER_WRAP ,p=1),
     A.RGBShift(r_shift_limit=25, g_shift_limit=25, b_shift_limit=25, p=0.5),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.25, 0.25), contrast_limit=(-0.25, 0.25)),
-    A.HueSaturationValue(hue_shift_limit=25, sat_shift_limit=35, val_shift_limit=25, p=0.6),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.25, 0.25), contrast_limit=(-0.10, 0.10)),
+    A.HueSaturationValue(hue_shift_limit=(-0.25, 0.25), sat_shift_limit=(-0.25, 0.25), val_shift_limit=(-0.25, 0.25), p=0.6),
     A.MotionBlur(p=0.3, blur_limit=(3))
 ])
 
@@ -126,10 +126,10 @@ def batch_overlay(
 if __name__ == '__main__':
     batch_overlay(
         backgrounds_dir='./background',
-        pics_root='./nums/dataset2',
-        output_root='./dataset/test',
+        pics_root='./96_obj',
+        output_root='./dataset_obj/val',
         min_scale=0.6,
-        max_scale=0.9,
-        min_visible=1.1,
-        num_augments=4
+        max_scale=1.2,
+        min_visible=0.9,
+        num_augments=20
     )

@@ -17,11 +17,12 @@ def find_images(root_dir):
 # 定义数据增强管道
 augmentation_pipeline = A.Compose([
     A.ElasticTransform(p=0.45, alpha=1.2, sigma=50),
-    A.OpticalDistortion(p=0.45, distort_limit=0.25),
-    A.RGBShift(r_shift_limit=25, g_shift_limit=25, b_shift_limit=25, p=0.5),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.25, 0.25), contrast_limit=(-0.25, 0.25)),
-    A.HueSaturationValue(hue_shift_limit=25, sat_shift_limit=35, val_shift_limit=25, p=0.6),
-    A.MotionBlur(p=0.3, blur_limit=(3))
+    # A.OpticalDistortion(p=0.45, distort_limit=0.25),
+    A.Rotate(limit=(-10,10),  border_mode= cv2.BORDER_WRAP ,p=1),
+    A.RGBShift(r_shift_limit=(-10,10), g_shift_limit=(-10,10), b_shift_limit=(-10,10), p=0.8),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.45, 0.45), contrast_limit=(-0.10, 0.10)),
+    A.HueSaturationValue(hue_shift_limit=(-10,10), sat_shift_limit=(-10,10), val_shift_limit=(-10,10), p=0.6),
+    A.MotionBlur(p=0.6, blur_limit=(3))
 ])
 
 def batch_overlay(
@@ -62,7 +63,8 @@ def batch_overlay(
                         scaled_img = small_img.resize(new_size, Image.LANCZOS)
                         
                         # 随机旋转
-                        angle = random.uniform(0, 360)
+                        # angle = random.uniform(0, 360)
+                        angle = random.choice([0,90,180,270])
                         rotated_img = scaled_img.rotate(
                             angle,
                             expand=True,
@@ -116,8 +118,8 @@ if __name__ == '__main__':
     batch_overlay(
         backgrounds_dir='./background',
         pics_root='./nums/dataset2',
-        output_root='./dataset/train',
+        output_root='./dataset/val',
         min_scale=0.6,
-        max_scale=0.9,
-        num_augments=40
+        max_scale=1.1,
+        num_augments=2
     )
