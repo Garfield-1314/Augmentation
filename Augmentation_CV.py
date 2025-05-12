@@ -510,9 +510,9 @@ def pixelate_image(rootpath, savepath, pixel_size=10):
 #     cv2.waitKey(0)
 
 def runs():
-    root_path = "./background"
+    root_path = "../O"
     
-    save_path = "./background"
+    save_path = "./96_obj"
     
     YASUO(root_path,save_path,target_width=96, target_height=96)
     # Rotate_90_180_270(root_path,save_path)

@@ -7,9 +7,9 @@ from albumentations import (
 from tqdm import tqdm
 
 # 配置参数
-input_dir = "./nums/0-9"        # 输入图片根目录（包含子文件夹）
-output_dir = "./nums/0-92"   # 输出图片根目录
-num_augments = 5-1                   # 每张图片生成多少个增强版本
+input_dir = "./nums/dataset"        # 输入图片根目录（包含子文件夹）
+output_dir = "./nums/dataset2"   # 输出图片根目录
+num_augments = 3-1                   # 每张图片生成多少个增强版本
 
 # 创建输出目录
 os.makedirs(output_dir, exist_ok=True)
@@ -19,7 +19,7 @@ augmentation_pipeline = Compose([
     # HorizontalFlip(p=0.25),
     # VerticalFlip(p=0.25),
     ElasticTransform(p=0.35,alpha=1, sigma=20),
-    OpticalDistortion(p=0.35,distort_limit=0.2, shift_limit=0.2),
+    # OpticalDistortion(p=0.35,distort_limit=0.2, shift_limit=0.2),
     # Rotate(limit=45, p=0.5),
     RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.25),
     RandomBrightnessContrast(p=1,brightness_limit=(-0.25,0.25),contrast_limit=(-0.10,0.10)),

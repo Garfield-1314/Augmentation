@@ -2,7 +2,7 @@ import os
 import random
 from PIL import Image
 
-def generate_two_digits(input_root, output_root, total_samples=10000, spacing=2):
+def generate_two_digits(input_root, output_root, total_samples=10000, spacing=0):
     """
     合成两位数的图片，确保每个组合均匀分布
     
@@ -77,7 +77,7 @@ def combine_digits(img_path1, img_path2, spacing):
     
     w1, h1 = img1.size
     w2, h2 = img2.size
-    
+    spacing = random.randint(-3, 0)
     # 计算新图片尺寸
     total_width = w1 + w2 + spacing
     max_height = max(h1, h2)
@@ -110,6 +110,7 @@ if __name__ == '__main__':
     # 再合成两位数
     generate_two_digits(
         input_root='./nums/dataset',
-        output_root='./nums/dataset2',
-        total_samples=10000  # 总共生成10000个样本（每个两位数100个）
+        output_root='./nums/dataset3',
+        spacing = 0,
+        total_samples=200  
     )

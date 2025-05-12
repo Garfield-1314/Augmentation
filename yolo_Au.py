@@ -111,12 +111,12 @@ val_transform = A.Compose(
 # 路径配置
 base_dir = {
     'images': {
-        'train': 'nums/images/train',
-        'val': 'nums/images/val'
+        'train': '../biyesheji/dataset/images/train',
+        'val': '../biyesheji/dataset/images/val'
     },
     'labels': {
-        'train': 'nums/labels/train',
-        'val': 'nums/labels/val'
+        'train': '../biyesheji/dataset/labels/train',
+        'val': '../biyesheji/dataset/labels/val'
     }
 }
 
@@ -220,9 +220,9 @@ def save_augmented(image, bboxes, orig_filename, split_name, copy_number=0):
 # 执行处理
 if __name__ == "__main__":
     # 训练集增强（生成10个增强版本）
-    process_split('train', augment=True , Au_num = 100)
+    process_split('train', augment=True , Au_num = 10)
     
     # 验证集原样复制（可选）
-    process_split('val', augment=True , Au_num = 100)
+    process_split('val', augment=True , Au_num = 10)
     
     print("All data processed!")
