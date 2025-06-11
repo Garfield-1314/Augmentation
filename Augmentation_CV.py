@@ -512,9 +512,9 @@ def pixelate_image(rootpath, savepath, pixel_size=10):
 def runs():
     root_path = "../O"
     
-    save_path = "./96_obj"
+    save_path = "../120_obj"
     
-    YASUO(root_path,save_path,target_width=96, target_height=96)
+    YASUO(root_path,save_path,target_width=120, target_height=120)
     # Rotate_90_180_270(root_path,save_path)
     # D_dan_B(root_path,save_path)
 
