@@ -18,7 +18,7 @@ def find_images(root_dir):
 augmentation_pipeline = A.Compose([
     A.ElasticTransform(p=0.45, alpha=1.2, sigma=50),
     # A.OpticalDistortion(p=0.45, distort_limit=0.25),
-    A.Rotate(limit=(-10,10),  border_mode= cv2.BORDER_WRAP ,p=1),
+    A.Rotate(limit=(-45,45),  border_mode= cv2.BORDER_WRAP ,p=1),
     A.RGBShift(r_shift_limit=(-10,10), g_shift_limit=(-10,10), b_shift_limit=(-10,10), p=0.8),
     A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.45, 0.45), contrast_limit=(-0.10, 0.10)),
     A.HueSaturationValue(hue_shift_limit=(-10,10), sat_shift_limit=(-10,10), val_shift_limit=(-10,10), p=0.6),
@@ -117,9 +117,9 @@ def batch_overlay(
 if __name__ == '__main__':
     batch_overlay(
         backgrounds_dir='./background',
-        pics_root='./nums/dataset2',
-        output_root='./dataset/val',
-        min_scale=0.6,
-        max_scale=1.1,
-        num_augments=2
+        pics_root='./text2',
+        output_root='./text4',
+        min_scale=1.4,
+        max_scale=2.3,
+        num_augments=1
     )

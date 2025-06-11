@@ -220,7 +220,7 @@ if __name__ == '__main__':
         font_dir='./nums/fonts',
         output_root='./nums/dataset',
         digits_range=(0, 10),
-        total_samples=10,
+        total_samples=1000,
         base_padding=0,
         underline_config={'width': 5, 'padding': 8},
         morph_config={

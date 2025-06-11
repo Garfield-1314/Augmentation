@@ -77,7 +77,7 @@ def combine_digits(img_path1, img_path2, spacing):
     
     w1, h1 = img1.size
     w2, h2 = img2.size
-    spacing = random.randint(-3, 0)
+    spacing = random.randint(-3, 3)
     # 计算新图片尺寸
     total_width = w1 + w2 + spacing
     max_height = max(h1, h2)
@@ -95,11 +95,11 @@ def combine_digits(img_path1, img_path2, spacing):
 
 if __name__ == '__main__':
     # 先生成个位数字
-    # generate_digits(
+    # generate_two_digits(
     #     font_dir='./nums/fonts',
     #     output_root='./nums/dataset',
     #     digits_range=(0, 10),
-    #     total_samples=1000,  # 每个数字生成100个样本
+    #     total_samples=10000,  # 每个数字生成100个样本
     #     base_padding=2,
     #     underline_config={
     #         'width': 4,
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     # 再合成两位数
     generate_two_digits(
         input_root='./nums/dataset',
-        output_root='./nums/dataset3',
+        output_root='./text2',
         spacing = 0,
-        total_samples=200  
+        total_samples=500
     )
