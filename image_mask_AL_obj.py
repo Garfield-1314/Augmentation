@@ -126,10 +126,10 @@ def batch_overlay(
 if __name__ == '__main__':
     batch_overlay(
         backgrounds_dir='./background',
-        pics_root='./pictures',
+        pics_root='../120_obj',
         output_root='./text2',
         min_scale=0.9,
         max_scale=1.1,
         min_visible=0.8,
-        num_augments=1000
+        num_augments=1
     )
