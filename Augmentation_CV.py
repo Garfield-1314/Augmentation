@@ -497,6 +497,98 @@ def pixelate_image(rootpath, savepath, pixel_size=10):
             except Exception as e:
                 print(f"处理图像时出错: {file_path}, 错误信息: {e}") 
 
+
+####################正方形转换###########################################
+####################正方形转换###########################################
+####################正方形转换###########################################
+def make_square(image):
+    """
+    将不规则尺寸图片转换为正方形，用白色填充边缘
+    
+    参数:
+        image: OpenCV格式的图像(numpy数组)
+    
+    返回:
+        正方形图像(numpy数组)
+    """
+    # 转换为PIL格式处理
+    img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    
+    # 获取图片尺寸
+    width, height = img_pil.size
+    
+    # 计算正方形边长（取最大边）
+    new_size = max(width, height)
+    
+    # 创建白色背景的正方形画布
+    if img_pil.mode == 'RGBA':
+        # 对于带透明通道的图片使用白色不透明背景
+        new_image = Image.new('RGBA', (new_size, new_size), (255, 255, 255, 255))
+    else:
+        # RGB或其他模式使用白色背景
+        new_image = Image.new('RGB', (new_size, new_size), (255, 255, 255))
+    
+    # 计算粘贴位置（居中）
+    paste_position = ((new_size - width) // 2, (new_size - height) // 2)
+    
+    # 将原始图片粘贴到新画布上
+    new_image.paste(img_pil, paste_position)
+    
+    # 处理透明通道（如果原图有透明区域）
+    if img_pil.mode == 'RGBA':
+        new_image = new_image.convert('RGB')
+    
+    # 转换回OpenCV格式
+    return cv2.cvtColor(np.array(new_image), cv2.COLOR_RGB2BGR)
+
+def Square_image(rootpath, savepath):
+    """
+    遍历目录并将所有图片转换为正方形
+    
+    参数:
+        rootpath: 源图片目录
+        savepath: 保存目录
+    """
+    save_loc = savepath
+    for a, b, c in os.walk(rootpath):
+        for file_i in c:
+            file_i_path = os.path.join(a, file_i)
+            print(f"处理文件: {file_i_path}")
+            
+            # 获取文件所在目录名
+            split = os.path.split(file_i_path)
+            dir_loc = os.path.split(split[0])[1]
+            save_path = os.path.join(save_loc, dir_loc)
+
+            # 如果保存路径不存在，则创建
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+                print(f"目录 {save_path} 创建成功！")
+            
+            try:
+                # 读取图像
+                img_i = cv2.imread(file_i_path)
+                if img_i is None:
+                    print(f"无法读取文件: {file_i_path}")
+                    continue
+                
+                # 转换为正方形
+                img_square = make_square(img_i)
+                
+                # 保存图像
+                base_name = os.path.splitext(file_i)[0]  # 获取文件名（不含扩展名）
+                save_file_name = f"{base_name}_square.jpg"
+                save_file_path = os.path.join(save_path, save_file_name)
+                cv2.imwrite(save_file_path, img_square)
+                print(f"正方形图片已保存至: {save_file_path}")
+                
+            except Exception as e:
+                print(f"处理图片时出错: {file_i_path}, 错误信息: {str(e)}")
+####################正方形转换###########################################
+####################正方形转换###########################################
+####################正方形转换###########################################
+
+
 # def TestOnePic():
 #     test_jpg_loc = r"data/A/firearms_001.jpg"
 #     test_jpg = cv2.imread(test_jpg_loc)
@@ -510,11 +602,11 @@ def pixelate_image(rootpath, savepath, pixel_size=10):
 #     cv2.waitKey(0)
 
 def runs():
-    root_path = "../O"
+    root_path = "./garbage40"
     
-    save_path = "../120_obj"
+    save_path = "./garbage40_2"
     
-    YASUO(root_path,save_path,target_width=120, target_height=120)
+    # YASUO(root_path,save_path,target_width=120, target_height=120)
     # Rotate_90_180_270(root_path,save_path)
     # D_dan_B(root_path,save_path)
 
@@ -536,8 +628,11 @@ def runs():
 
     # save_path = r"dataset/GS"
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
+
+
+    Square_image(root_path,save_path)
     
-    # pixelate_image(root_path,save_path,pixel_size=2)
+    pixelate_image(root_path,save_path,pixel_size=2)
 if __name__ == "__main__":
     runs()
  
