@@ -218,12 +218,12 @@ if __name__ == '__main__':
     ]
     
     batch_overlay(
-        backgrounds_dir='./background',
-        pics_root='./SC20_120',
-        output_root='./data_obj_roi',
-        min_scale=0.9,
-        max_scale=1.1,
+        backgrounds_dir='../Datasets/background',
+        pics_root='../Datasets/nums_dataset3',
+        output_root='../Datasets/data_nums3_roi',
+        min_scale=0.8,
+        max_scale=1.2,
         min_visible=1.0,  # 80%的小图必须位于指定ROI区域内
-        num_augments=1,
+        num_augments=3,
         roi_list=custom_roi
     )
