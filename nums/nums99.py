@@ -2,115 +2,103 @@ import os
 import random
 from PIL import Image
 
-def generate_two_digits(input_root, output_root, total_samples=10000, spacing=0):
+def generate_digit_images(parent_dir, output_dir, num_images=100, spacing=0):
     """
-    合成两位数的图片，确保每个组合均匀分布
-    
-    参数说明：
-    - input_root: 个位数图片的根目录
-    - output_root: 输出根目录
-    - total_samples: 总样本数量
-    - spacing: 数字间水平间距（像素）
+    生成指定数量的两位数组合图片，并为每个两位数创建单独的子文件夹
+    :param parent_dir: 包含0-9数字子文件夹的父目录
+    :param output_dir: 合成图片的输出根目录
+    :param num_images: 要生成的图片总数（默认100张）
+    :param spacing: 个位和十位数字之间的间距（像素，默认0）
     """
-    # 计算每个两位数的样本数
-    samples_per_two_digit, remainder = divmod(total_samples, 100)
-    samples_distribution = [samples_per_two_digit + 1 if i < remainder else samples_per_two_digit for i in range(100)]
-
-    # 收集个位数图片路径
-    versions = ['', '']
-    digit_paths = {v: {d: [] for d in range(10)} for v in versions}
+    # 确保输出根目录存在
+    os.makedirs(output_dir, exist_ok=True)
     
-    for version in versions:
-        for digit in range(10):
-            dir_path = os.path.join(input_root, version, str(digit))
-            if os.path.exists(dir_path):
-                digit_paths[version][digit] = [
-                    os.path.join(dir_path, f)
-                    for f in os.listdir(dir_path)
-                    if f.endswith('.png')
-                ]
-
-    # 创建输出目录
-    for version in versions:
-        for two_digit in range(100):
-            output_dir = os.path.join(output_root, version, 'two_digits', f"{two_digit:02d}")
-            os.makedirs(output_dir, exist_ok=True)
-
-    # 生成图片
-    for version in versions:
-        print(f"\n正在生成 {version} 版本...")
-        for two_digit in range(100):
-            d1, d2 = two_digit // 10, two_digit % 10
-            samples_needed = samples_distribution[two_digit]
+    # 预加载每个数字的图片路径
+    digit_images = {str(i): [] for i in range(10)}
+    
+    # 扫描数字文件夹 (0-9)
+    for digit in digit_images.keys():
+        folder_path = os.path.join(parent_dir, digit)
+        if not os.path.exists(folder_path):
+            print(f"警告: 数字文件夹 {digit} 不存在: {folder_path}")
+            continue
             
-            # 获取可用路径
-            d1_paths = digit_paths[version][d1]
-            d2_paths = digit_paths[version][d2]
-            
-            if not d1_paths or not d2_paths:
-                print(f"跳过 {two_digit:02d}：缺少数字素材")
-                continue
+        # 收集文件夹中的图片文件
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+            if os.path.isfile(file_path) and file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                digit_images[digit].append(file_path)
+    
+    # 验证是否有足够的图片
+    for digit in digit_images:
+        if not digit_images[digit]:
+            print(f"错误: 数字文件夹 {digit} 中没有图片")
+            return
+    
+    # 生成指定数量的两位数图片
+    for i in range(num_images):
+        # 随机选择两位数（00-99）
+        tens = random.randint(0, 9)
+        ones = random.randint(0, 9)
+        target_num = f"{tens}{ones}"
+        ten_str = str(tens)
+        one_str = str(ones)
+        
+        # 创建目标输出文件夹（以两位数命名）
+        num_output_dir = os.path.join(output_dir, target_num)
+        os.makedirs(num_output_dir, exist_ok=True)
+        
+        # 随机选择图片
+        tens_image_path = random.choice(digit_images[ten_str])
+        ones_image_path = random.choice(digit_images[one_str])
+        
+        try:
+            # 加载并合成图片
+            with Image.open(tens_image_path) as img_tens, \
+                 Image.open(ones_image_path) as img_ones:
                 
-            print(f"生成 {two_digit:02d}（需要{samples_needed}个样本）")
-            
-            # 确保有足够的样本组合
-            for i in range(samples_needed):
-                # 随机选择不重复的组合（简单实现）
-                img1 = random.choice(d1_paths)
-                img2 = random.choice(d2_paths)
+                # 统一图片高度
+                height = max(img_tens.height, img_ones.height)
                 
-                # 合成并保存
-                combined = combine_digits(img1, img2, spacing)
-                output_path = os.path.join(
-                    output_root,
-                    version,
-                    'two_digits',
-                    f"{two_digit:02d}",
-                    f"{two_digit:02d}_{i:04d}.png"
-                )
-                combined.save(output_path)
+                # 调整图片尺寸（保持比例）
+                def resize_with_aspect(img, target_height):
+                    ratio = target_height / img.height
+                    new_width = int(img.width * ratio)
+                    return img.resize((new_width, target_height), Image.LANCZOS)
+                
+                img_tens = resize_with_aspect(img_tens, height)
+                img_ones = resize_with_aspect(img_ones, height)
+                
+                # 创建新画布（添加间距）
+                spacing =  int(random.uniform(0, 20))
 
-def combine_digits(img_path1, img_path2, spacing):
-    """合成两个数字图片，保持垂直居中"""
-    img1 = Image.open(img_path1)
-    img2 = Image.open(img_path2)
-    
-    w1, h1 = img1.size
-    w2, h2 = img2.size
-    spacing = random.randint(-3, 3)
-    # 计算新图片尺寸
-    total_width = w1 + w2 + spacing
-    max_height = max(h1, h2)
-    
-    new_img = Image.new('RGB', (total_width, max_height), (255, 255, 255))
-    
-    # 计算垂直偏移
-    y_offset1 = (max_height - h1) // 2
-    y_offset2 = (max_height - h2) // 2
-    
-    new_img.paste(img1, (0, y_offset1))
-    new_img.paste(img2, (w1 + spacing, y_offset2))
-    
-    return new_img
+                combined_width = img_tens.width + img_ones.width + spacing
+                combined_img = Image.new('RGB', (combined_width, height), color=(255, 255, 255))
+                
+                # 粘贴图片（添加间距）
+                combined_img.paste(img_tens, (0, 0))
+                combined_img.paste(img_ones, (img_tens.width + spacing, 0))
+                
+                # 生成唯一文件名（避免覆盖）
+                file_count = len(os.listdir(num_output_dir))
+                output_path = os.path.join(num_output_dir, f"{target_num}_{file_count+1}.jpg")
+                
+                # 保存结果
+                combined_img.save(output_path, quality=95)
+                print(f"已生成: {output_path}")
+                
+        except Exception as e:
+            print(f"生成 {target_num} 时出错: {str(e)}")
 
-if __name__ == '__main__':
-    # 先生成个位数字
-    # generate_two_digits(
-    #     font_dir='./nums/fonts',
-    #     output_root='./nums/dataset',
-    #     digits_range=(0, 10),
-    #     total_samples=10000,  # 每个数字生成100个样本
-    #     base_padding=2,
-    #     underline_config={
-    #         'width': 4,
-    #         'padding': 4
-    #     }
-    # )
+if __name__ == "__main__":
+    # 根据截图1的实际路径修改
+    input_root = r"E:\github\Datasets\nums_dataset1"  # 包含0-9文件夹的根目录
     
-    # 再合成两位数
-    generate_two_digits(
-        input_root='./nums/dataset',
-        output_root='./text2',
-        spacing = 0,
-        total_samples=500
-    )
+    # 输出根目录（根据截图2修改）
+    output_root = r"E:\github\Datasets\nums_dataset2"  # 合成图片的输出根目录
+    
+    # 自定义参数
+    num_images = 50000  # 要生成的图片总数
+    spacing = 0      # 个位和十位之间的间距（像素）
+    
+    generate_digit_images(input_root, output_root, num_images, spacing)

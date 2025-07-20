@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def generate_noise_image(size=(224, 224), save_path=None, white_background=False):
+def generate_noise_image(size=(135, 135), save_path=None, white_background=False):
     """
     生成随机噪声图像或纯白色背景图像
     
@@ -38,6 +38,6 @@ def generate_noise_image(size=(224, 224), save_path=None, white_background=False
 
 # 生成白色背景图
 generate_noise_image(
-    save_path='./background/white_image.png',
+    save_path='../Datasets/background_w/background.png',
     white_background=True
 )

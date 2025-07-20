@@ -76,12 +76,12 @@ def split_dataset(source_dir, target_dir, train_ratio=0.7, val_ratio=0.2, test_r
 
 def runs():
     split_dataset(
-        source_dir="./text2",
-        target_dir="text2_train",
-        train_ratio=0.8,
+        source_dir='../Datasets/data_nums3_roi',
+        target_dir='../Datasets/data_nums3_roi_shift',
+        train_ratio=0.7,
         val_ratio=0.2,
-        test_ratio=0.0,
-        seed=12  # 固定随机种子确保可重复性
+        test_ratio=0.1,
+        seed=749  # 固定随机种子确保可重复性
     )
 if __name__ == "__main__":
     runs()

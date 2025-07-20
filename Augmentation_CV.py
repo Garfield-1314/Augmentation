@@ -240,6 +240,9 @@ def compress_img_CV(img, target_width=800, target_height=600):
     img_resize = cv2.resize(img, (target_width, target_height), interpolation=cv2.INTER_AREA)
     return img_resize
 
+import datetime
+
+
 def YASUO(rootpath, savepath, target_width=800, target_height=600):
     """
     遍历指定目录下的所有图片文件，将其缩放到固定大小并保存到目标目录
@@ -248,6 +251,9 @@ def YASUO(rootpath, savepath, target_width=800, target_height=600):
     :param target_width: 目标宽度
     :param target_height: 目标高度
     """
+    # 获取当前日期（YYYYMMDD格式）
+    current_date = datetime.datetime.now().strftime("%Y%m%d")
+    
     save_loc = savepath
     for a, b, c in os.walk(rootpath):
         for file_i in c:
@@ -263,8 +269,6 @@ def YASUO(rootpath, savepath, target_width=800, target_height=600):
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
                 print(f"目录 {save_path} 创建成功！")
-            # else:
-            #     print(f"目录 {save_path} 已存在，无需创建。")
 
             # 读取图像
             img_i = cv2.imread(file_i_path)
@@ -275,11 +279,13 @@ def YASUO(rootpath, savepath, target_width=800, target_height=600):
             # 缩放图像
             img_yasuo = compress_img_CV(img_i, target_width=target_width, target_height=target_height)
 
-            # 保存缩放后的图像
+            # 保存缩放后的图像（格式：原文件名_宽度x高度_日期.jpg）
             base_name = os.path.splitext(file_i)[0]  # 获取文件名（不含扩展名）
-            save_file_name = f"{base_name}_80.jpg"
+            # 新命名格式：原文件名 + 尺寸（宽x高） + 日期
+            save_file_name = f"{base_name}_{target_width}x{target_height}_{current_date}.jpg"
             save_file_path = os.path.join(save_path, save_file_name)
             cv2.imwrite(save_file_path, img_yasuo)
+            print(f"已保存: {save_file_path}")
             # print(f"图像已保存到: {save_file_path}")
 ####################压缩图片###########################################
 ####################压缩图片###########################################
@@ -600,13 +606,14 @@ def Square_image(rootpath, savepath):
 #     img2 = GaussianNoise(test_jpg,0.4)
 #     cv2.imshow("Img 2", img2)
 #     cv2.waitKey(0)
-
+import random
 def runs():
-    root_path = "./garbage40"
+    root_path = '../Datasets/nums_dataset2'
     
-    save_path = "./garbage40_2"
-    
-    # YASUO(root_path,save_path,target_width=120, target_height=120)
+    save_path = '../Datasets/nums_dataset3'
+    # for i in range(-5,5):
+    #     b = 40 + i*2
+    #     YASUO(root_path,save_path,target_width=b, target_height=100)
     # Rotate_90_180_270(root_path,save_path)
     # D_dan_B(root_path,save_path)
 
@@ -629,11 +636,9 @@ def runs():
     # save_path = r"dataset/GS"
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
 
-
     Square_image(root_path,save_path)
     
-    pixelate_image(root_path,save_path,pixel_size=2)
+    # pixelate_image(root_path,save_path,pixel_size=2)
 if __name__ == "__main__":
     runs()
  
-
