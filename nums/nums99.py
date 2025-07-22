@@ -70,7 +70,7 @@ def generate_digit_images(parent_dir, output_dir, num_images=100, spacing=0):
                 img_ones = resize_with_aspect(img_ones, height)
                 
                 # 创建新画布（添加间距）
-                spacing =  int(random.uniform(0, 20))
+                spacing =  int(random.uniform(-5, 5))
 
                 combined_width = img_tens.width + img_ones.width + spacing
                 combined_img = Image.new('RGB', (combined_width, height), color=(255, 255, 255))
@@ -92,13 +92,13 @@ def generate_digit_images(parent_dir, output_dir, num_images=100, spacing=0):
 
 if __name__ == "__main__":
     # 根据截图1的实际路径修改
-    input_root = r"E:\github\Datasets\nums_dataset1"  # 包含0-9文件夹的根目录
+    input_root = "../Datasets/9_dataset_3"  # 包含0-9文件夹的根目录
     
     # 输出根目录（根据截图2修改）
-    output_root = r"E:\github\Datasets\nums_dataset2"  # 合成图片的输出根目录
+    output_root = "../Datasets/99_dataset"   # 合成图片的输出根目录
     
     # 自定义参数
-    num_images = 50000  # 要生成的图片总数
+    num_images = 100000  # 要生成的图片总数
     spacing = 0      # 个位和十位之间的间距（像素）
     
     generate_digit_images(input_root, output_root, num_images, spacing)

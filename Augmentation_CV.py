@@ -57,6 +57,7 @@ def Horizontal_Vertical(rootpath,savepath):
 ####################翻转###########################################
 ####################翻转###########################################
 
+
 ####################旋转###########################################
 ####################旋转###########################################
 ####################旋转###########################################
@@ -253,7 +254,8 @@ def YASUO(rootpath, savepath, target_width=800, target_height=600):
     """
     # 获取当前日期（YYYYMMDD格式）
     current_date = datetime.datetime.now().strftime("%Y%m%d")
-    
+    # target_width2 = int(random.uniform(-15,10))
+    # target_width = int(target_width + target_width2)
     save_loc = savepath
     for a, b, c in os.walk(rootpath):
         for file_i in c:
@@ -277,6 +279,7 @@ def YASUO(rootpath, savepath, target_width=800, target_height=600):
                 continue
 
             # 缩放图像
+
             img_yasuo = compress_img_CV(img_i, target_width=target_width, target_height=target_height)
 
             # 保存缩放后的图像（格式：原文件名_宽度x高度_日期.jpg）
@@ -606,39 +609,33 @@ def Square_image(rootpath, savepath):
 #     img2 = GaussianNoise(test_jpg,0.4)
 #     cv2.imshow("Img 2", img2)
 #     cv2.waitKey(0)
+
+
 import random
 def runs():
-    root_path = '../Datasets/nums_dataset2'
+    root_path = '../Datasets/SC20_160'
     
-    save_path = '../Datasets/nums_dataset3'
-    # for i in range(-5,5):
-    #     b = 40 + i*2
-    #     YASUO(root_path,save_path,target_width=b, target_height=100)
+    save_path = '../Datasets/SC20_135'
+
+    YASUO(root_path,save_path,target_width=135, target_height=135)
+
     # Rotate_90_180_270(root_path,save_path)
-    # D_dan_B(root_path,save_path)
 
-
-    # save_path = r"dataset/Rotate"
     # Rotate_90_180_270(root_path,save_path)    #图像旋转---可任意角度
 
-    # save_path = r"dataset/hue"
     # hue_image(root_path,save_path)    #图像色调扰动---可任意参数
 
-    # save_path = r"dataset/D_B"
     # D_dan_B(root_path,save_path)    #图像明暗扰动---可任意参数
 
-    # save_path = r"dataset/Cont"
     # Contrast_image(root_path,save_path)    #图像对比度扰动---可任意参数
 
-    # save_path = r"dataset/hsv"
     # hsv_image(root_path,save_path)         #图像饱和度扰动---可任意参数
 
-    # save_path = r"dataset/GS"
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
 
-    Square_image(root_path,save_path)
+    # Square_image(root_path,save_path)     
     
-    # pixelate_image(root_path,save_path,pixel_size=2)
+    # pixelate_image(root_path,save_path,pixel_size=3)      
 if __name__ == "__main__":
     runs()
  

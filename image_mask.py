@@ -131,11 +131,11 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
 if __name__ == '__main__':
     # 示例调用 - 使用居中模式并调整缩放比例
     batch_overlay(
-        backgrounds_dir='../Datasets/background_w', 
-        pics_root='../Datasets/nums_dataset1',
-        output_root='../Datasets/nums_dataset3',
-        min_scale=0.65,  # 居中模式下的最小缩放比例
-        max_scale=1.3,  # 居中模式下的最大缩放比例
+        backgrounds_dir='../Datasets/background_w_135', 
+        pics_root='../Datasets/9_dataset_3',
+        output_root='../Datasets/9_dataset_3_135',
+        min_scale=0.8,  # 居中模式下的最小缩放比例
+        max_scale=1.2,  # 居中模式下的最大缩放比例
         min_visible=1.0,
         center_mode=True  # 启用居中模式
     )

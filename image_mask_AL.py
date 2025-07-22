@@ -27,11 +27,23 @@ small_aug_pipeline = A.Compose([
 
 # 定义全局增强管道（完整变换）
 global_aug_pipeline = A.Compose([
-    A.ElasticTransform(p=0.35, alpha=1.2, sigma=50),
+    A.RGBShift(r_shift_limit=(-10, 10), g_shift_limit=(-10, 10), b_shift_limit=(-10, 10), p=0.5),
+    A.HueSaturationValue(hue_shift_limit=(-10, 10), 
+                         sat_shift_limit=(-15, 15), 
+                         val_shift_limit=(-10, 10), 
+                         p=0.7),
     A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.10), contrast_limit=(-0.1, 0.1)),
+    A.ElasticTransform(p=0.1, alpha=1.2, sigma=50),
     A.Rotate(limit=(-5,5), border_mode=cv2.BORDER_WRAP, p=0.5),
     A.MotionBlur(p=0.1, blur_limit=(3)),
-    A.ISONoise(p=0.2)
+    A.ISONoise(p=0.2),
+    # A.CoarseDropout(
+    #     num_holes_range=(1,2),          # 最大遮挡块数量
+    #     hole_height_range=(0.05,0.1),  
+    #     hole_width_range=(0.05,0.1),
+    #     fill_value = 0,
+    #     p=0.1                # 应用概率
+    # )
 ])
 
 def apply_small_aug(img_cv):
@@ -109,7 +121,7 @@ def batch_overlay(
 
                         # 随机旋转
                         angle = random.choice([0, 90, 180, 270])
-                        angle1 = random.uniform(-30, 30)
+                        angle1 = random.uniform(-10, 10)
                         angle = angle + angle1
                         rotated_img = scaled_img.rotate(
                             angle,
@@ -219,11 +231,11 @@ if __name__ == '__main__':
     
     batch_overlay(
         backgrounds_dir='../Datasets/background',
-        pics_root='../Datasets/nums_dataset3',
-        output_root='../Datasets/data_nums3_roi',
-        min_scale=0.8,
-        max_scale=1.2,
+        pics_root='../Datasets/SC20_135',
+        output_root='../Datasets/SC20_135_roi/val',
+        min_scale=0.9,
+        max_scale=1.1,
         min_visible=1.0,  # 80%的小图必须位于指定ROI区域内
-        num_augments=3,
+        num_augments=6,
         roi_list=custom_roi
     )
