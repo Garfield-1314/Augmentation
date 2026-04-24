@@ -613,11 +613,11 @@ def Square_image(rootpath, savepath):
 
 import random
 def runs():
-    root_path = '../Datasets/SC20_160'
+    root_path = '../smartcar26'
     
-    save_path = '../Datasets/SC20_135'
+    save_path = '../Datasets/smartcar26_160'
 
-    YASUO(root_path,save_path,target_width=135, target_height=135)
+    YASUO(root_path,save_path,target_width=160, target_height=160)
 
     # Rotate_90_180_270(root_path,save_path)
 
@@ -634,8 +634,11 @@ def runs():
     # G_and_S(root_path,save_path)           #图像高斯和椒盐噪声扰动---可任意参数
 
     # Square_image(root_path,save_path)     
+
+    root_path = '../Datasets/smartcar26_160'
+    save_path = '../Datasets/smartcar26_160_pixelated'
+    pixelate_image(root_path,save_path,pixel_size=3)      #图像像素化---可任意参数
     
-    # pixelate_image(root_path,save_path,pixel_size=3)      
 if __name__ == "__main__":
     runs()
  

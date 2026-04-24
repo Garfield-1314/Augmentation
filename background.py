@@ -46,8 +46,8 @@ def generate_noise_image(size=(224, 224), save_path=None, white_background=False
 
 # 示例：生成带黑色噪点的白背景
 generate_noise_image(
-    size=(135, 135),              # 200x200像素
-    save_path='../Datasets/background_w_135/noisy_white_bg.png', # 保存路径
+    size=(160, 240),              # 160x240像素
+    save_path='../Datasets/background/noisy_white_bg.png', # 保存路径
     white_background=True,         # 使用白色背景
     noise_density=0.00             # 3%像素为黑色噪点
 )
