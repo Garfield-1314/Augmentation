@@ -46,7 +46,7 @@ global_aug_pipeline = A.Compose([
                          sat_shift_limit=(-15, 15), 
                          val_shift_limit=(-10, 10), 
                          p=0.7),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.10), contrast_limit=(-0.1, 0.1)),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.2), contrast_limit=(-0.1, 0.1)),
     A.ElasticTransform(p=0.1, alpha=1.2, sigma=50),
     # A.Rotate(limit=(-5,5), border_mode=cv2.BORDER_WRAP, p=0.5),
     A.MotionBlur(p=0.1, blur_limit=(3)),
@@ -220,22 +220,7 @@ def batch_overlay(
     print("所有图像合成完成！")
 
 if __name__ == '__main__':
-    # 示例用法1：没有指定ROI，默认使用整个背景
-    # batch_overlay(
-    #     backgrounds_dir='./background',
-    #     pics_root='./SC20_120',
-    #     output_root='./data_obj_1',
-    #     min_scale=0.9,
-    #     max_scale=1.1,
-    #     min_visible=0.85,  # 85%的小图必须位于ROI区域内
-    #     num_augments=9
-    # )
-    
-    # 示例用法2：指定ROI - 格式为[(背景路径, (x, y, w, h)), ...]
-    # custom_roi = [
-    #     ('./background',(100,100,24,24)),    # 为bg1.jpg指定ROI
-    # ]
-    
+
     batch_overlay(
         backgrounds_dir='../Datasets/background',
         pics_root='../Datasets/smartcar26_160_pixelated',

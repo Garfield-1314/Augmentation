@@ -59,9 +59,32 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ## 使用示例
 
-### 基础增强
+### 模块化调用 (推荐)
+自从 v2.0.0 版本起，该项目已全面模块化。你可以创建一个 `main.py` 来灵活组合功能：
+
 ```python
-# 使用Albumentations进行增强
+from Augmentation_AL import augment_dataset
+import Augmentation_CV
+import background
+
+# 1. 生成纯净背景
+background.batch_generate_backgrounds('../Datasets/bg', num_images=5)
+
+# 2. 传统 CV 增强 (如压缩)
+Augmentation_CV.batch_yasuo('../input', '../temp', w=160, h=160)
+
+# 3. 高级 AL 增强 (生成 10 倍数据)
+augment_dataset('../temp', '../output', num_augments=10)
+```
+
+或直接运行 `main.py` 查看演示：
+```bash
+python main.py
+```
+
+### 基础增强 (旧模式兼容)
+```bash
+# 依然可以直接运行脚本，内部包含默认配置
 python Augmentation_AL.py
 ```
 
