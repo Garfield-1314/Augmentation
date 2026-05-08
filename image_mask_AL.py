@@ -34,8 +34,7 @@ small_geom_pipeline = A.Compose([
         shear={'x': (-10, 10), 'y': (-10, 10)}, 
         rotate=(-10, 10),
         fit_output=True, 
-        p=0.8,
-        cval=0
+        p=0.8
     )
 ])
 

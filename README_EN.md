@@ -43,6 +43,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ## Core Features
 
 ### 1. Image Augmentation
+- Local Illumination: Simulate overexposure (bright spots) and shadows (dark spots) caused by uneven lighting.
 - Elastic distortion, optical distortion, rotation
 - RGB color shifting, brightness/contrast adjustment
 - Hue/saturation adjustment, motion blur
