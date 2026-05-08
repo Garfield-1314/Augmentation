@@ -31,8 +31,8 @@ small_geom_pipeline = A.Compose([
     # rotate=(-10, 10) 模拟微小旋转
     # shear={'x': (-20, 20)} 产生水平方向的拉伸位移，模拟侧方观察视角
     A.Affine(
-        shear={'x': (-10, 10), 'y': (-10, 10)}, 
-        rotate=(-10, 10),
+        shear={'x': (-5, 5), 'y': (-5, 5)}, 
+        rotate=(-5, 5),
         fit_output=True, 
         p=0.8
     )
