@@ -46,8 +46,8 @@ if __name__ == "__main__":
     print("Adding local illumination augmentation...")
     Augmentation_CV.batch_local_illumination('../Datasets/smartcar26_160_masked_AL', 
                                              '../Datasets/smartcar26_160_masked_AL_illumination', 
-                                             strength_range=(-100,100), # 添加局部光照增强，增加亮斑数量和强度范围
-                                             radius_range=(40, 120), # 添加局部光照增强，设置影响半径范围
+                                             strength_range=(-50,100), # 添加局部光照增强，增加亮斑数量和强度范围
+                                             radius_range=(40, 160), # 添加局部光照增强，设置影响半径范围
                                              num_spots=4) # 添加局部光照增强  
 
     # 示例 5: 数据集划分
