@@ -1,5 +1,15 @@
 # 更新日志 (CHANGELOG)
 
+## [2026-05-08] - 局部光照增强与兼容性修复
+
+### 新增 (Added)
+- **局部光照模拟**：在 `Augmentation_CV.py` 中新增 `LocalIllumination` 算法。
+  - 支持通过二维高斯掩码模拟真实的局部强光（过曝）与局部阴影（过暗）效果。
+  - 新增 `batch_local_illumination` 批量处理接口，支持随机生成多个光斑/阴影点。
+
+### 修复 (Fixed)
+- **Albumentations API 兼容性**：修复了 `image_mask_AL.py` 中 `A.Affine` 变换因使用过时参数 `cval` 导致的警告。已统一切换为新版 API 的 `fill_value` 参数。
+
 ## [2.0.0] - 2026-05-07
 
 ### 重构 (Refactor)

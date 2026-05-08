@@ -43,6 +43,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ## 核心功能
 
 ### 1. 图像增强
+- 局部光照模拟（Local Illumination）：模拟自然光照产生的局部过曝（强光）与局部阴影（过暗）
 - 弹性变形、光学畸变、旋转
 - RGB色彩变换、亮度对比度调整
 - 色调/饱和度调整、运动模糊

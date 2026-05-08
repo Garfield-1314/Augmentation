@@ -114,6 +114,43 @@ def make_square(image):
     new_image.paste(img_pil, paste_position)
     return cv2.cvtColor(np.array(new_image), cv2.COLOR_RGB2BGR)
 
+
+def LocalIllumination(image, num_spots=None, strength_range=(-150, 200), radius_range=None):
+    """
+    模拟局部光照不均（包括局部过曝和局部阴影/过暗）
+    :param image: 输入图像 (BGR 格式)
+    :param num_spots: 光照/阴影点数量，默认随机 1-3 个
+    :param strength_range: 亮度变化范围。正数为增亮，负数为变暗
+    :param radius_range: 影响半径范围，默认根据图像尺寸自动计算
+    :return: 增强后的图像
+    """
+    h, w, c = image.shape
+    if num_spots is None:
+        num_spots = np.random.randint(1, 4)
+    
+    if radius_range is None:
+        min_dim = min(h, w)
+        radius_range = (min_dim // 8, min_dim // 3)
+    
+    result = image.astype(np.float32)
+    y, x = np.ogrid[:h, :w]
+    
+    for _ in range(num_spots):
+        center_x = np.random.randint(0, w)
+        center_y = np.random.randint(0, h)
+        # 随机选择强度，可能为正（光亮）或负（阴影）
+        strength = np.random.randint(strength_range[0], strength_range[1])
+        radius = np.random.randint(radius_range[0], radius_range[1])
+        
+        sigma = radius / 2.0
+        dist_sq = (x - center_x)**2 + (y - center_y)**2
+        mask = np.exp(-dist_sq / (2 * sigma**2))
+        
+        # 叠加亮度变化（加法实现增亮，减法实现变暗）
+        result += mask[:, :, np.newaxis] * strength
+        
+    return np.clip(result, 0, 255).astype(np.uint8)
+
 # --- 批量处理封装 ---
 
 def process_directory(rootpath, savepath, process_func, suffix, **kwargs):
@@ -148,6 +185,9 @@ def batch_rotate(root, save, angles=[90, 180, 270]):
 
 def batch_pixelate(root, save, size=10):
     process_directory(root, save, pixelate, f"pixelated", pixel_size=size)
+
+def batch_local_illumination(root, save, strength_range=(-150, 200), radius_range=None, num_spots=None):
+    process_directory(root, save, LocalIllumination, f"illumination", strength_range=strength_range, radius_range=radius_range, num_spots=num_spots)
 
 def batch_flip(root, save):
     process_directory(root, save, Horizontal, "Hor")
