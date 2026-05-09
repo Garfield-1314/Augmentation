@@ -21,6 +21,7 @@ def split_dataset(source_dir, target_dir, train_ratio=0.7, val_ratio=0.2, test_r
     if seed is not None:
         random.seed(seed)
     
+    print("Splitting dataset into train/val/test...")
     # 创建目标目录
     for split in ['train', 'val', 'test']:
         os.makedirs(os.path.join(target_dir, split), exist_ok=True)

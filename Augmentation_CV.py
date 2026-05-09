@@ -177,6 +177,7 @@ def process_directory(rootpath, savepath, process_func, suffix, **kwargs):
 
 # 具体的批量调用封装
 def batch_yasuo(root, save, w=800, h=600):
+    print(f"Compressing images to {w}x{h}...")
     process_directory(root, save, compress_img_CV, f"{w}x{h}", target_width=w, target_height=h)
 
 def batch_rotate(root, save, angles=[90, 180, 270]):
@@ -184,9 +185,11 @@ def batch_rotate(root, save, angles=[90, 180, 270]):
         process_directory(root, save, Rotate, f"rotate{angle}", angle=angle)
 
 def batch_pixelate(root, save, size=10):
+    print(f"Pixelating images with size {size}...")
     process_directory(root, save, pixelate, f"pixelated", pixel_size=size)
 
 def batch_local_illumination(root, save, strength_range=(-150, 200), radius_range=None, num_spots=None):
+    print("Adding local illumination augmentation...")
     process_directory(root, save, LocalIllumination, f"illumination", strength_range=strength_range, radius_range=radius_range, num_spots=num_spots)
 
 def batch_flip(root, save):

@@ -15,7 +15,7 @@ def get_augmentation_pipeline():
         # OpticalDistortion(p=0.35,distort_limit=0.2, shift_limit=0.2),
         # Rotate(limit=45, p=0.5),
         RGBShift(r_shift_limit=10, g_shift_limit=10, b_shift_limit=10, p=0.25),
-        RandomBrightnessContrast(p=0.25, brightness_limit=(-0.25, 0.25), contrast_limit=(-0.10, 0.10)),
+        RandomBrightnessContrast(p=0.25, brightness_limit=(-0.1, 0.15), contrast_limit=(-0.10, 0.10)),
         HueSaturationValue(hue_shift_limit=(-5, 5),
                            sat_shift_limit=(-5, 5),
                            val_shift_limit=(-5, 5),
@@ -33,6 +33,7 @@ def augment_images(input_dir, output_dir, num_augments=9):
     """
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
+    print(f"Applying advanced augmentations to {output_dir}...")
     
     # 获取增强管道
     augmentation_pipeline = get_augmentation_pipeline()

@@ -18,7 +18,7 @@ def find_images(root_dir):
 # 定义小图增强管道（仅颜色变换，针对 RGB）
 small_aug_pipeline = A.Compose([
     A.RGBShift(r_shift_limit=(-10, 10), g_shift_limit=(-10, 10), b_shift_limit=(-10, 10), p=0.5),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.10), contrast_limit=(-0.1, 0.1)),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.15), contrast_limit=(-0.1, 0.1)),
     A.HueSaturationValue(hue_shift_limit=(-10, 10), 
                          sat_shift_limit=(-15, 15), 
                          val_shift_limit=(-10, 10), 
@@ -45,7 +45,7 @@ global_aug_pipeline = A.Compose([
                          sat_shift_limit=(-15, 15), 
                          val_shift_limit=(-10, 10), 
                          p=0.7),
-    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.2), contrast_limit=(-0.1, 0.1)),
+    A.RandomBrightnessContrast(p=0.8, brightness_limit=(-0.10, 0.15), contrast_limit=(-0.1, 0.1)),
     A.ElasticTransform(p=0.1, alpha=1.2, sigma=50),
     # A.Rotate(limit=(-5,5), border_mode=cv2.BORDER_WRAP, p=0.5),
     A.MotionBlur(p=0.1, blur_limit=(3)),
@@ -95,6 +95,7 @@ def batch_overlay(
     bg_paths = list(find_images(backgrounds_dir))
     pic_paths = list(find_images(pics_root))
     
+    print("Starting image composition and augmentation...")
     print(f"找到 {len(bg_paths)} 张背景图片")
     print(f"找到 {len(pic_paths)} 张小图")
     total_tasks = len(bg_paths) * len(pic_paths) * num_augments

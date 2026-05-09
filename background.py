@@ -30,6 +30,7 @@ def generate_noise_image(size=(224, 224), save_path=None, white_background=False
     
     # 保存逻辑
     if save_path:
+        print(f"Generating background images to {save_path}...")
         folder_path = os.path.dirname(save_path)
         if folder_path and not os.path.exists(folder_path):
             os.makedirs(folder_path)
