@@ -66,9 +66,30 @@ def Blur(img):
     """模糊"""
     return cv2.GaussianBlur(img, (3, 3), 1)
 
-def compress_img_CV(img, target_width=800, target_height=600):
-    """图像缩放/压缩"""
-    return cv2.resize(img, (target_width, target_height), interpolation=cv2.INTER_AREA)
+def compress_img_CV(img, target_width=800, target_height=600, mode='stretch'):
+    """图像缩放/压缩
+    :param mode: 'stretch' (整体拉伸) 或 'crop' (中心裁剪)
+    """
+    if mode == 'stretch':
+        return cv2.resize(img, (target_width, target_height), interpolation=cv2.INTER_AREA)
+    elif mode == 'crop':
+        h, w = img.shape[:2]
+        # 计算比例
+        scale_w = target_width / w
+        scale_h = target_height / h
+        scale = max(scale_w, scale_h)
+        
+        # 先按比例缩放，使得一边对齐，另一边超出
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        resized = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        
+        # 中心裁剪
+        start_x = (new_w - target_width) // 2
+        start_y = (new_h - target_height) // 2
+        return resized[start_y:start_y+target_height, start_x:start_x+target_width]
+    else:
+        raise ValueError("Mode must be 'stretch' or 'crop'")
 
 def Darker_Brighter(image, percetage):
     """明暗调节"""
@@ -176,9 +197,9 @@ def process_directory(rootpath, savepath, process_func, suffix, **kwargs):
             cv2.imwrite(os.path.join(current_save_path, save_name), result)
 
 # 具体的批量调用封装
-def batch_yasuo(root, save, w=800, h=600):
-    print(f"Compressing images to {w}x{h}...")
-    process_directory(root, save, compress_img_CV, f"{w}x{h}", target_width=w, target_height=h)
+def batch_yasuo(root, save, w=800, h=600, mode='stretch'):
+    print(f"Compressing images to {w}x{h} with mode {mode}...")
+    process_directory(root, save, compress_img_CV, f"{w}x{h}_{mode}", target_width=w, target_height=h, mode=mode)
 
 def batch_rotate(root, save, angles=[90, 180, 270]):
     for angle in angles:
