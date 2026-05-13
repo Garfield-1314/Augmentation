@@ -58,7 +58,7 @@ OPERATIONS_TEMPLATE = {
         "kwargs": {"size_h": 224, "size_w": 224, "white_background": False, "noise_density": 0.05}
     },
     "8. Image Mask - 简单拼贴背景合成": {
-        "kwargs": {"min_scale": 0.3, "max_scale": 1.7, "min_visible": 0.75, "center_mode": False}
+        "kwargs": {"min_scale": 0.8, "max_scale": 1.2, "min_visible": 0.8, "center_mode": False}
     },
     "9. 检测 - YOLO数据集划分": {
         "kwargs": {"train_ratio": 0.8, "copy_files": True, "random_seed": 42}
@@ -117,6 +117,11 @@ class PipelineListWidget(QListWidget):
 
 def run_op(op_name, kwargs, cur_in, cur_out, bg_dir):
     """独立的流水线执行函数"""
+    
+    # 【Demo版阉割逻辑】仅放行 1, 6, 8 
+    # if not (op_name.startswith("1.") or op_name.startswith("6.") or op_name.startswith("8.")):
+    #     raise ImportError(f"DLL load failed while importing _core_engine for module {op_name.split(' - ')[0]}: The specified component requires complete dependencies which are missing in this environment.")
+
     if op_name.startswith("1."):
         Augmentation_CV.batch_yasuo(cur_in, cur_out, **kwargs)
     elif op_name.startswith("2."):

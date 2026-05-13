@@ -38,7 +38,7 @@ def augment_images(input_dir, output_dir, num_augments=9):
     
     # 获取增强管道
     augmentation_pipeline = get_augmentation_pipeline()
-    
+
     # 支持的图片格式
     extensions = ['.jpg', '.jpeg', '.png']
 
