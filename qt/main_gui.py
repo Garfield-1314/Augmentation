@@ -70,7 +70,26 @@ class PipelineListWidget(QListWidget):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.setDragDropMode(QAbstractItemView.DragDrop)
-        self.setStyleSheet("QListWidget { background-color: #f9f9f9; border: 2px dashed #bbb; border-radius: 5px; }")
+        self.setStyleSheet("""
+            QListWidget { 
+                background-color: #FAFAFA; 
+                border: 2px dashed #DCDFE6; 
+                border-radius: 8px; 
+                padding: 5px;
+            }
+            QListWidget::item {
+                background-color: #FFFFFF;
+                border: 1px solid #E4E7ED;
+                border-radius: 5px;
+                padding: 8px;
+                margin-bottom: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #ECF5FF;
+                border: 1px solid #409EFF;
+                color: #409EFF;
+            }
+        """)
 
     def dropEvent(self, event):
         if event.source() == self:
@@ -210,9 +229,22 @@ class AugmentationApp(QMainWindow):
         self.palette.setSpacing(10)
         self.palette.setResizeMode(QListView.Adjust)
         self.palette.setStyleSheet("""
-            QListWidget { background-color: #e3f2fd; border: 1px solid #90caf9; padding: 5px; }
-            QListWidget::item { background-color: #ffffff; border: 1px solid #bbbbbb; border-radius: 5px; padding: 5px; }
-            QListWidget::item:hover { background-color: #bbdefb; }
+            QListWidget { 
+                background-color: transparent; 
+                border: none; 
+            }
+            QListWidget::item { 
+                background-color: #FFFFFF; 
+                border: 1px solid #DCDFE6; 
+                border-radius: 20px; 
+                padding: 5px 15px; 
+                margin: 2px;
+            }
+            QListWidget::item:hover { 
+                background-color: #ECF5FF; 
+                border: 1px solid #409EFF; 
+                color: #409EFF;
+            }
         """)
         
         for op in OPERATIONS_TEMPLATE.keys():
@@ -258,19 +290,30 @@ class AugmentationApp(QMainWindow):
         
         self.ori_label = QLabel("原图加载中...")
         self.ori_label.setAlignment(Qt.AlignCenter)
-        self.ori_label.setStyleSheet("background-color: #222; color: #aaa; border: 1px solid #555;")
+        self.ori_label.setStyleSheet("background-color: #EBEEF5; color: #909399; border: 1px dashed #DCDFE6; border-radius: 8px;")
         
         self.res_label = QLabel("运行预览后显示结果")
         self.res_label.setAlignment(Qt.AlignCenter)
-        self.res_label.setStyleSheet("background-color: #222; color: #aaa; border: 1px solid #555;")
+        self.res_label.setStyleSheet("background-color: #EBEEF5; color: #909399; border: 1px dashed #DCDFE6; border-radius: 8px;")
         
         # 增加 stretch系数(1) 强制左右各占 50% 空间，防止只有单侧有图片时产生挤压
         image_layout.addWidget(self.ori_label, 1)
         image_layout.addWidget(self.res_label, 1)
         center_vbox.addLayout(image_layout)
         
-        self.preview_btn = QPushButton("刷新效果预览")
-        self.preview_btn.setStyleSheet("background-color: #2196F3; color: white; padding: 5px;")
+        self.preview_btn = QPushButton(" 刷新效果预览 ")
+        self.preview_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #E6A23C; 
+                color: white; 
+                border: none;
+                font-weight: bold;
+                padding: 8px;
+                border-radius: 4px;
+            }
+            QPushButton:hover { background-color: #ebb563; }
+            QPushButton:pressed { background-color: #cf9236; }
+        """)
         self.preview_btn.clicked.connect(self.refresh_preview)
         center_vbox.addWidget(self.preview_btn)
 
@@ -292,9 +335,15 @@ class AugmentationApp(QMainWindow):
         right_vbox = QVBoxLayout()
         
         top_btn_layout = QHBoxLayout()
-        remove_btn = QPushButton("删除选中模块")
+        remove_btn = QPushButton("移除选中")
+        remove_btn.setStyleSheet("color: #F56C6C; border-color: #FBC4C4; background-color: #FEF0F0;")
         remove_btn.clicked.connect(self.remove_step)
+        clear_btn = QPushButton("清空全部")
+        clear_btn.setStyleSheet("color: #909399; border-color: #DCDFE6; background-color: #F4F4F5;")
+        clear_btn.clicked.connect(lambda: self.list_widget.clear())
+        
         top_btn_layout.addWidget(remove_btn)
+        top_btn_layout.addWidget(clear_btn)
         right_vbox.addLayout(top_btn_layout)
 
         self.list_widget = PipelineListWidget()
@@ -303,7 +352,20 @@ class AugmentationApp(QMainWindow):
         right_vbox.addWidget(self.list_widget)
         
         self.run_btn = QPushButton("运行流水线")
-        self.run_btn.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;")
+        self.run_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #67C23A; 
+                color: white; 
+                font-weight: bold; 
+                padding: 12px;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            QPushButton:hover { background-color: #85ce61; }
+            QPushButton:pressed { background-color: #5daf34; }
+            QPushButton:disabled { background-color: #b3e19d; }
+        """)
         self.run_btn.clicked.connect(self.run_pipeline)
         right_vbox.addWidget(self.run_btn)
         
@@ -487,9 +549,82 @@ class AugmentationApp(QMainWindow):
         self.progress_bar.setValue(0)
         QMessageBox.critical(self, "执行中断", f"发生错误:\n{err_msg}")
 
+MODERN_QSS = """
+QMainWindow, QWidget {
+    background-color: #F3F5F8;
+    color: #333333;
+    font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+    font-size: 13px;
+}
+QGroupBox {
+    background-color: #FFFFFF;
+    border: 1px solid #DCDFE6;
+    border-radius: 8px;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 15px;
+    top: 0px;
+    color: #409EFF;
+    font-weight: bold;
+    background-color: transparent;
+}
+QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #DCDFE6;
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #606266;
+}
+QPushButton:hover {
+    color: #409EFF;
+    border-color: #C6E2FF;
+    background-color: #ECF5FF;
+}
+QPushButton:pressed {
+    color: #3A8EE6;
+    border-color: #3A8EE6;
+    background-color: #FFFFFF;
+}
+QLineEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #DCDFE6;
+    border-radius: 4px;
+    padding: 6px;
+    selection-background-color: #409EFF;
+}
+QLineEdit:focus {
+    border-color: #409EFF;
+}
+QProgressBar {
+    border: 1px solid #E4E7ED;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #EBEEF5;
+    color: #606266;
+    height: 18px;
+}
+QProgressBar::chunk {
+    background-color: #67C23A;
+    border-radius: 4px;
+}
+QSplitter::handle {
+    background-color: #E4E7ED;
+    width: 6px;
+    border-radius: 3px;
+}
+QSplitter::handle:hover {
+    background-color: #C0C4CC;
+}
+"""
+
 if __name__ == "__main__":
     from PyQt5.QtCore import QTimer
     app = QApplication(sys.path)
+    app.setStyleSheet(MODERN_QSS)
     window = AugmentationApp()
     window.show()
     # 使用定时器延迟 0 毫秒调用全屏，确保 OS 窗口管理器彻底分发好普通窗口体后再进入最大化，解决“假全屏” Bug
