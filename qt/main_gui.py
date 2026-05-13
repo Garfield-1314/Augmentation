@@ -118,7 +118,6 @@ class PipelineListWidget(QListWidget):
 def run_op(op_name, kwargs, cur_in, cur_out, bg_dir):
     """独立的流水线执行函数"""
     
-    # 【Demo版阉割逻辑】仅放行 1, 6, 8 
     # if not (op_name.startswith("1.") or op_name.startswith("6.") or op_name.startswith("8.")):
     #     raise ImportError(f"DLL load failed while importing _core_engine for module {op_name.split(' - ')[0]}: The specified component requires complete dependencies which are missing in this environment.")
 
