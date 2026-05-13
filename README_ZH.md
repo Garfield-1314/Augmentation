@@ -33,6 +33,19 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ### 可视化工具 (GUI)
 
 - **`qt/main_gui.py`**: 提供强大的基于组件拖拽式图像处理与流水线编排桌面端界面软件。支持灵活设置输入输出、效果实时预览，以及无刷新状态非阻塞执行。运行方式：`python qt/main_gui.py`。
+
+#### 打包为可执行程序 (.exe)
+如果希望脱离 Python 环境运行，可以使用 PyInstaller 将 GUI 界面及其依赖打包为绿色免安装桌面程序：
+```bash
+# 激活环境并安装 pyinstaller
+conda activate Au
+pip install pyinstaller
+
+# 执行打包命令
+pyinstaller -w --name "Augmentation_GUI" --paths . --add-data "modules;modules" --add-data "example_images;example_images" --clean -y qt/main_gui.py
+```
+打包完成后，产物位于 `dist/Augmentation_GUI` 目录。将此整个文件夹发给其他用户，对方直接双击 `Augmentation_GUI.exe` 即可使用。
+
 | **shift_detection.py** | YOLO数据集划分（训练/验证集分割） |
 | **shift_classification.py** | 分类数据集处理 |
 | **background.py** | 背景图像管理 |

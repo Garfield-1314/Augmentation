@@ -1,5 +1,12 @@
 import sys
 import os
+
+# 修复 PyInstaller -w 模式打包后，sys.stdout/stderr 为 None 导致的 tqdm 及 print 报错 ('NoneType' object has no attribute 'write')
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, 'w')
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, 'w')
+
 import copy
 import tempfile
 import shutil
@@ -12,7 +19,13 @@ from PyQt5.QtCore import Qt, QSize, QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
 # 将上一级目录加入path以便导入 modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if getattr(sys, 'frozen', False):
+    # 如果是用 PyInstaller 打包后的 exe 环境
+    bundle_dir = sys._MEIPASS
+else:
+    bundle_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.append(bundle_dir)
 import modules.Augmentation_CV as Augmentation_CV
 import modules.Augmentation_AL as Augmentation_AL
 import modules.background as background
@@ -265,7 +278,7 @@ class AugmentationApp(QMainWindow):
         splitter.addWidget(center_panel)
 
         # 加载演示图片
-        self.example_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "example_images")
+        self.example_dir = os.path.join(bundle_dir, "example_images")
         self.example_img_path = os.path.join(self.example_dir, "picture.jpg")
         
         if os.path.exists(self.example_img_path):
