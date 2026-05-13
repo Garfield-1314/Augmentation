@@ -8,6 +8,7 @@
 - **依赖包**:
   - opencv-python - 图像处理
   - matplotlib - 可视化
+  - PyQt5 - 图形用户可视化界面
   - albumentationsx - 高级数据增强
   - tqdm - 进度条显示
 
@@ -27,7 +28,11 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 | **Augmentation_CV.py** | 基于OpenCV的传统增强方法（翻转、旋转、噪声等） |
 | **image_mask.py** | 背景合成与图像掩膜处理 |
 | **image_mask_AL.py** | 基于Albumentations的掩膜增强 |
-| **yolo_Au.py** | YOLO数据集专用增强管道 |
+| **yolo_Au.py** | YOLO数据集专用增强管道（维护中...） |
+
+### 可视化工具 (GUI)
+
+- **`qt/main_gui.py`**: 提供强大的基于组件拖拽式图像处理与流水线编排桌面端界面软件。支持灵活设置输入输出、效果实时预览，以及无刷新状态非阻塞执行。运行方式：`python qt/main_gui.py`。
 | **shift_detection.py** | YOLO数据集划分（训练/验证集分割） |
 | **shift_classification.py** | 分类数据集处理 |
 | **background.py** | 背景图像管理 |

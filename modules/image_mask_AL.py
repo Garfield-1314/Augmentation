@@ -204,7 +204,7 @@ def batch_overlay(
                         output_path = os.path.join(output_dir, output_name)
                         
                         # 保存增强后的图像
-                        cv2.imwrite(output_path, augmented_img)
+                        cv2.imencode('.jpg', augmented_img)[1].tofile(output_path)
                         
                         # 更新进度条
                         pbar.set_postfix_str(f"处理: {os.path.basename(output_path)}")

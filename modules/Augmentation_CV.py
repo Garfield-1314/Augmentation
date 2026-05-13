@@ -185,7 +185,8 @@ def process_directory(rootpath, savepath, process_func, suffix, **kwargs):
                 continue
                 
             file_i_path = os.path.join(a, file_i)
-            img_i = cv2.imread(file_i_path)
+            # 使用 cv2.imdecode 替代 cv2.imread 以支持中文路径
+            img_i = cv2.imdecode(np.fromfile(file_i_path, dtype=np.uint8), cv2.IMREAD_COLOR)
             if img_i is None: continue
 
             os.makedirs(current_save_path, exist_ok=True)
@@ -194,7 +195,12 @@ def process_directory(rootpath, savepath, process_func, suffix, **kwargs):
             
             base_name, ext = os.path.splitext(file_i)
             save_name = f"{base_name}_{suffix}{ext}"
-            cv2.imwrite(os.path.join(current_save_path, save_name), result)
+            
+            # 使用 cv2.imencode 替代 cv2.imwrite 以支持中文路径
+            save_file_path = os.path.join(current_save_path, save_name)
+            is_success, im_buf_arr = cv2.imencode(ext, result)
+            if is_success:
+                im_buf_arr.tofile(save_file_path)
 
 # 具体的批量调用封装
 def batch_yasuo(root, save, w=800, h=600, mode='stretch'):

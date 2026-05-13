@@ -1,4 +1,6 @@
 opencv-python
 matplotlib
-albumentationsx
+albumentationsx == 2.1.0
 tqdm
+PyQt5
+scikit-learn
