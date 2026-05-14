@@ -8,6 +8,7 @@ A comprehensive computer vision data processing toolkit featuring image augmenta
 - **Dependencies**:
   - opencv-python - Image processing
   - matplotlib - Data visualization
+  - PyQt5 - Graphical user interface
   - albumentationsx - Advanced data augmentation
   - tqdm - Progress bar display
 
@@ -27,7 +28,24 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 | **Augmentation_CV.py** | Traditional OpenCV enhancement methods (flip, rotate, noise, etc.) |
 | **image_mask.py** | Background compositing and image mask processing |
 | **image_mask_AL.py** | Albumentations-based mask augmentation |
-| **yolo_Au.py** | YOLO dataset-specific augmentation pipeline |
+| **yolo_Au.py** | YOLO dataset-specific augmentation pipeline (Currently under maintenance) |
+
+### Graphical User Interface (GUI)
+
+- **`qt/main_gui.py`**: A powerful drag-and-drop based visual interface software that offers an interactive desktop workflow to construct node-based image processing pipelines. Contains live previews, multitasking optimization non-blocking executions, and layout components modeling Altium Designer (AD). Run via: `python qt/main_gui.py`.
+
+#### Build Standalone Executable (.exe)
+If you want to run the application without setting up a Python environment, you can pack the GUI into a standalone executable using PyInstaller:
+```bash
+# Activate environment and install pyinstaller
+conda activate Au
+pip install pyinstaller
+
+# Run the build command
+pyinstaller -w --name "Augmentation_GUI" --paths . --add-data "modules;modules" --add-data "example_images;example_images" --clean -y qt/main_gui.py
+```
+Compiled output will be located in the `dist/Augmentation_GUI` directory. Simply distribute this entire folder, and users can run `Augmentation_GUI.exe` out of the box.
+
 | **shift_detection.py** | YOLO dataset partitioning (train/validation split) |
 | **shift_classification.py** | Classification dataset processing |
 | **background.py** | Background image management |

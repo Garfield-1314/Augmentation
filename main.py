@@ -1,8 +1,8 @@
-import Augmentation_CV
-import Augmentation_AL 
-import background
-import image_mask_AL
-import shift_classification
+import modules.Augmentation_CV as Augmentation_CV
+import modules.Augmentation_AL as Augmentation_AL
+import modules.background as background
+import modules.image_mask_AL as image_mask_AL
+import modules.shift_classification as shift_classification
 
 if __name__ == "__main__":
     print("Starting augmentation process...")

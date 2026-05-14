@@ -14,9 +14,9 @@ def find_images(root_dir):
 def batch_overlay(backgrounds_dir=r'dataset\background', 
                  pics_root=r'dataset\stage2',
                  output_root=r'dataset\stage3',
-                 min_scale=0.3,
-                 max_scale=1.7,
-                 min_visible=0.75,
+                 min_scale=0.8,
+                 max_scale=1.2,
+                 min_visible=0.8,
                  center_mode=False):
     """
     支持缩放、旋转和位置调整的批量处理
@@ -77,7 +77,7 @@ def batch_overlay(backgrounds_dir=r'dataset\background',
                         scaled_img = small_img.resize(new_size, Image.LANCZOS)
                         
                         # 随机旋转
-                        angle = random.uniform(0, 360)
+                        angle = random.uniform(-10, 10)
                         rotated_img = scaled_img.rotate(
                             angle,
                             expand=True,

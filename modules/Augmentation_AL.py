@@ -1,5 +1,6 @@
 ﻿import os
 import cv2
+import numpy as np
 from albumentations import (
     Compose, HorizontalFlip, Rotate,
     RGBShift, RandomBrightnessContrast,MotionBlur,VerticalFlip,HueSaturationValue,ElasticTransform,OpticalDistortion
@@ -58,7 +59,7 @@ def augment_images(input_dir, output_dir, num_augments=9):
             
             # 读取图片
             img_path = os.path.join(root, filename)
-            image = cv2.imread(img_path)
+            image = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)
             
             if image is None:
                 print(f"Warning: Could not read {img_path}")
@@ -66,7 +67,8 @@ def augment_images(input_dir, output_dir, num_augments=9):
             
             # 保存原始图片
             original_output = os.path.join(current_output_dir, f"original_{filename}")
-            cv2.imwrite(original_output, image)
+            ext_save = os.path.splitext(filename)[1]
+            cv2.imencode(ext_save, image)[1].tofile(original_output)
             
             # 生成多个增强版本
             for i in range(num_augments):
@@ -79,7 +81,7 @@ def augment_images(input_dir, output_dir, num_augments=9):
                 output_path = os.path.join(current_output_dir, aug_filename)
                 
                 # 保存增强后的图片
-                cv2.imwrite(output_path, augmented_img)
+                cv2.imencode(ext, augmented_img)[1].tofile(output_path)
 
 if __name__ == "__main__":
     # 默认配置参数
