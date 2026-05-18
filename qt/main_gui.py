@@ -33,6 +33,7 @@ import modules.image_mask_AL as image_mask_AL
 import modules.shift_classification as shift_classification
 import modules.shift_detection as shift_detection
 import modules.image_mask as image_mask
+import modules.yolo_Au as yolo_Au
 
 OPERATIONS_TEMPLATE = {
     "1. OpenCV - 尺寸调整/裁剪": {
@@ -62,6 +63,19 @@ OPERATIONS_TEMPLATE = {
     },
     "9. 检测 - YOLO数据集划分": {
         "kwargs": {"train_ratio": 0.8, "copy_files": True, "random_seed": 42}
+    },
+    "10. 检测 - YOLO 数据增强": {
+        "kwargs": {
+            "G_基础设置": {"Au_num": 5},
+            "G_局部曝光": {"p_illumination": 0.3, "illumination_min": -100, "illumination_max": 150, "illumination_spots": 3},
+            "G_弹性变形": {"p_elastic": 0.25, "elastic_alpha": 1.2, "elastic_sigma": 25},
+            "G_光学畸变": {"p_optical": 0.25, "optical_distort": 0.25},
+            "G_随机旋转": {"p_rotate": 0.25, "rotate_limit": 2},
+            "G_RGB偏移": {"p_rgb": 0.25, "r_shift": 10, "g_shift": 10, "b_shift": 10},
+            "G_亮度对比度": {"p_brightness": 0.5, "brightness_limit": 0.25, "contrast_limit": 0.15},
+            "G_色相饱和度": {"p_hue": 0.25, "hue_shift": 10, "sat_shift": 20, "val_shift": 10},
+            "G_动态模糊": {"p_motion": 0.25, "motion_blur_limit": 3}
+        }
     }
 }
 
@@ -157,6 +171,15 @@ def run_op(op_name, kwargs, cur_in, cur_out, bg_dir):
     elif op_name.startswith("9."):
         # 注意: 这里的cur_in必须是yolo格式，包含images和labels文件夹
         shift_detection.split_yolo_dataset(cur_in, **kwargs)
+    elif op_name.startswith("10."):
+        # 展平嵌套的字典参数传递给 batch_yolo_augment
+        flat_kwargs = {}
+        for k, v in kwargs.items():
+            if isinstance(v, dict) and k.startswith("G_"):
+                flat_kwargs.update(v)
+            else:
+                flat_kwargs[k] = v
+        yolo_Au.batch_yolo_augment(cur_in, cur_out, **flat_kwargs)
     else:
         raise NotImplementedError(f"未实现的操作: {op_name}")
 
@@ -180,7 +203,12 @@ class PipelineWorker(QThread):
                 kwargs = step['kwargs']
                 
                 safe_name = op_name.replace(" ", "").replace("/", "_")
-                step_out = os.path.join(self.output_dir, f"step{i}_{safe_name}")
+                # 如果是最后一步，直接输出到最终目标文件夹，避免被包装在 stepX 目录下
+                if i == len(self.steps) - 1:
+                    step_out = self.output_dir
+                else:
+                    step_out = os.path.join(self.output_dir, f"step{i}_{safe_name}")
+                
                 if not os.path.exists(step_out):
                     os.makedirs(step_out)
                 
@@ -412,8 +440,11 @@ class AugmentationApp(QMainWindow):
         while self.param_layout.count():
             item = self.param_layout.takeAt(0)
             widget = item.widget()
-            if widget is not None:
+            if widget:
                 widget.deleteLater()
+            elif item.layout():
+                # 如果是布局（比如GroupBox嵌套），需要递归清理或简单处理
+                self.clear_layout(item.layout())
                 
         if not current:
             return
@@ -421,12 +452,46 @@ class AugmentationApp(QMainWindow):
         op_name = current.text()
         kwargs = current.data(Qt.UserRole)
         
-        # 动态生成表单
+        # 遍历参数并生成表单
         for key, value in kwargs.items():
-            edit = QLineEdit(str(value))
-            # 绑定文本修改事件，实时更新 item 的数据
-            edit.textChanged.connect(lambda text, k=key, i=current: self.update_item_data(i, k, text))
-            self.param_layout.addRow(QLabel(key + ":"), edit)
+            if isinstance(value, dict) and key.startswith("G_"):
+                # 如果是分组参数
+                group_box = QGroupBox(key[2:]) # 去掉 G_ 前缀作为标题
+                group_layout = QFormLayout()
+                for sub_key, sub_value in value.items():
+                    edit = QLineEdit(str(sub_value))
+                    edit.textChanged.connect(lambda text, k=key, sk=sub_key, i=current: self.update_nested_item_data(i, k, sk, text))
+                    group_layout.addRow(QLabel(sub_key + ":"), edit)
+                group_box.setLayout(group_layout)
+                self.param_layout.addRow(group_box)
+            else:
+                edit = QLineEdit(str(value))
+                # 绑定文本修改事件，实时更新 item 的数据
+                edit.textChanged.connect(lambda text, k=key, i=current: self.update_item_data(i, k, text))
+                self.param_layout.addRow(QLabel(key + ":"), edit)
+
+    def clear_layout(self, layout):
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+            elif item.layout():
+                self.clear_layout(item.layout())
+
+    def update_nested_item_data(self, item, group_key, sub_key, text):
+        data = item.data(Qt.UserRole)
+        orig_val = data[group_key][sub_key]
+        try:
+            if isinstance(orig_val, int):
+                data[group_key][sub_key] = int(text)
+            elif isinstance(orig_val, float):
+                data[group_key][sub_key] = float(text)
+            else:
+                data[group_key][sub_key] = text
+            item.setData(Qt.UserRole, data)
+        except ValueError:
+            pass
 
     def update_item_data(self, item, key, text):
         data = item.data(Qt.UserRole)

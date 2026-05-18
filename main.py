@@ -8,18 +8,18 @@ if __name__ == "__main__":
     print("Starting augmentation process...")
     
     # # 示例 1: 生成背景图
-    # background.generate_noise_image(size=(160, 160), 
-    #                                 save_path='../Datasets/backgrounds/noisy_white_bg.png', 
-    #                                 white_background=False, 
-    #                                 noise_density=0.05, 
-    #                                 show=False)
+    background.generate_noise_image(size=(160, 160), 
+                                    save_path='../Datasets/backgrounds/noisy_white_bg.png', 
+                                    white_background=False, 
+                                    noise_density=0.05, 
+                                    show=False)
 
     # Augmentation_CV.batch_yasuo('../backgrounds', 
     #                         '../Datasets/backgrounds', 
     #                         mode='crop', w=160, h=160)
 
     # 示例 2: OpenCV 处理
-    Augmentation_CV.batch_yasuo('../smartcar26', 
+    Augmentation_CV.batch_yasuo('../smartcar26/objects', 
                                 '../Datasets/smartcar26_128', 
                                 mode='stretch',
                                 w=128, h=128)
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         min_scale=0.7,
         max_scale=1.1,
         min_visible=0.9,  # 90%的小图必须位于指定ROI区域内
-        num_augments=6
+        num_augments=1
     )
     
     Augmentation_CV.batch_local_illumination('../Datasets/smartcar26_128_masked_AL', 
