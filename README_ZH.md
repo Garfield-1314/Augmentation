@@ -25,7 +25,8 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 | 文件 | 功能说明 |
 |------|--------|
 | **Augmentation_AL.py** | 基于Albumentations的图像增强（推荐使用） |
-| **Augmentation_CV.py** | 基于OpenCV的传统增强方法（翻转、旋转、噪声等） |
+| **Augmentation_CV.py** | 基于 OpenCV 的传统增强方法（翻转、旋转、局部曝光等） |
+| **yolo_Au.py** | **[新]** 专门为 YOLO 目标检测数据集设计的同步增强模块（图与标签同步） |
 | **image_mask.py** | 背景合成与图像掩膜处理 |
 | **image_mask_AL.py** | 基于Albumentations的掩膜增强 |
 | **yolo_Au.py** | YOLO数据集专用增强管道（维护中...） |
